@@ -17,7 +17,6 @@ window.Player = {
 			count: amount,
             resonance: amount-1
         });
-		this.levelUpCard(ownedCard);
         return true;
     },
 	
