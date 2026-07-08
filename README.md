@@ -4,7 +4,7 @@
 
 ## 🎮 Play
 
-▶ https://[github아이디].github.io/IseoMemory/
+▶ https://cbkpar.github.io/IseoMemory/
 
 ## 📌 Features
 
