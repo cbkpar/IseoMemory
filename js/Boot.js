@@ -1,0 +1,7 @@
+function startBoot() {
+
+}
+
+function showBootAnimation() {
+
+}

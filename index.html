@@ -1,0 +1,81 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="css/style.css"></head>
+<body>
+<div id="boot">
+	<h1>MEMORY RECOVERY PROJECT</h1>
+	
+    <pre id="boot-log"></pre>
+    <div id="boot-progress">
+		<div id="boot-bar"></div>
+	</div>
+	<button id="bootBtn">
+		첫 번째 기억 복원
+	</button>
+</div>
+<div id="main" style="display:none">
+	<div id="album" class="album-container">
+		<div class="album-header"> MY PHOTO ALBUM </div>
+		<div id="card-list" class="card-list"></div>
+	</div>
+	<div id="log"></div>
+	<div id="progress-bar"></div>
+	<div id="systemLog"></div>
+	<div id="terminal"></div>
+	
+	
+	<div id="draw-area">
+		<button id="draw-button">
+			<div id="draw-count"> 💗 ×1	</div>
+			<div class="draw-progress">
+				<div id="draw-progress-fill"></div>
+			</div>
+			<div id="draw-timer">
+				READY
+			</div>
+
+		</button>
+		<div id="draw-result"></div>
+	</div>
+</div>
+
+<div id="draw-modal" class="draw-modal hidden">
+    <div class="draw-modal-bg"></div>
+    <div class="draw-modal-content">
+        <div class="draw-header">
+            <div class="draw-title"> MEMORY RECOVERY </div>
+        </div>
+        <div id="draw-grid" class="draw-grid"></div>
+        <div class="modal-footer">
+            <button id="draw-close" class="draw-continue" disabled> Next </button>
+        </div>
+    </div>
+</div>
+
+<div id="detail-modal" class="detail-modal hidden">
+    <div class="detail-modal-bg"></div>
+    <div class="detail-content">
+        <img id="detail-image">
+        <div id="detail-title"></div>
+        <div id="detail-stars"></div>
+		<div id="detail-level"></div>
+        <div id="detail-count"></div>
+		<div id="detail-effect"></div>
+        <div id="detail-date"></div>
+        <div id="detail-desc"></div>
+    </div>
+</div>
+
+<script src="js/App.js"></script>
+<script src="js/Data.js"></script>
+<script src="js/player.js"></script>
+<script src="js/SaveManager.js"></script>
+<script src="js/CardManager.js"></script>
+<script src="js/DrawManager.js"></script>
+<script src="js/Game.js"></script>
+<script src="js/CardUI.js"></script>
+<script src="js/UI.js"></script>
+<script src="js/Boot.js"></script>
+<script src="js/album.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>

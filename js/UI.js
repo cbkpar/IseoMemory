@@ -1,0 +1,203 @@
+window.UI = {
+    showMemory(memory) {
+        if (!memory) {
+            return;
+        }
+
+        const album = document.getElementById("album");
+		album.innerHTML = `
+		<div class="memory-album">
+
+			<div class="memory-header">
+				MEMORY RECOVERY
+			</div>
+
+			<div class="memory-chapter">
+				${memory.chapterId}
+			</div>
+
+			<div class="memory-title">
+				${memory.title}
+			</div>
+
+			<div class="memory-date">
+				📅 ${memory.date}
+			</div>
+
+			<div class="memory-description">
+				${memory.description}
+			</div>
+
+			<div class="memory-log">
+				AI LOG<br>
+				${memory.aiLog}
+			</div>
+
+		</div>
+		`;
+    },
+	
+	showCardDetail(data){
+		const card = CardManager.getCard(data.id);
+		const content = document.querySelector(".detail-content");
+		content.className = "detail-content " + card.rarity.toLowerCase();
+		
+		const modal = document.getElementById("detail-modal");
+
+		modal.addEventListener("click",(e)=>{
+			if(e.target.classList.contains("detail-modal-bg")){
+				e.currentTarget.classList.add("hidden");
+			}
+		});
+		modal.classList.remove("hidden");
+
+		const playerCard = PlayerData.ownedCards.find(c => c.id === data.id);
+		const level = playerCard.level ?? 1;
+		const exp = playerCard.resonance ?? 0;
+		const maxExp = level * level * 10;
+
+		document.getElementById("detail-image").src = "./assets/images/" + card.photo;
+		document.getElementById("detail-title").textContent = card.title;
+		document.getElementById("detail-date").textContent = "📅 " + card.date;
+		document.getElementById("detail-desc").textContent = card.description;
+		document.getElementById("detail-stars").textContent = "⭐".repeat(card.level);
+		document.getElementById("detail-level").textContent = `LV ${level} (${exp} / ${maxExp})`;
+		document.getElementById("detail-count").textContent = "💗".repeat(Math.min(data.count,7));
+		
+		const skillValue = CardManager.getSkillValue(card, playerCard);
+		const skillText = CardManager.SkillText[card.skill] ? CardManager.SkillText[card.skill](skillValue): card.skill;
+		document.getElementById("detail-effect").textContent =`✨ ${skillText}`;
+	}
+
+};
+
+window.DrawUI = {
+	
+    results:[],
+    page:0,
+    pageSize:10,
+    pages:[],
+	
+    init() {
+        const button = document.getElementById("draw-button");
+        button.onclick = () => {
+            const result = DrawManager.draw();
+			
+			if(result.length > 0){
+				const fill = document.getElementById("draw-progress-fill");
+				fill.style.transition = "none";
+				fill.style.width = "0%";
+				void fill.offsetWidth;
+				fill.style.transition = `${PlayerData.draw.cooldown}s linear`;
+				fill.style.width = "100%";
+			}
+			
+            this.showResult(result);
+            CardUI.renderCards("CH-000");
+        };
+		
+		// Continue 버튼
+		document.getElementById("draw-close").onclick = () => {
+			this.page++;
+			if(this.page >= this.pages.length){
+				document.getElementById("draw-modal").classList.add("hidden");
+				return;
+			}
+			this.showPage();
+		};
+		
+		
+		// 타이머 시작
+        this.updateTimer();
+        setInterval(() => { this.updateTimer(); }, 50);
+    },
+
+    updateTimer() {
+		const button = document.getElementById("draw-button");
+		const timer = document.getElementById("draw-timer");
+		const count = document.getElementById("draw-count");
+		const fill = document.getElementById("draw-progress-fill");
+		const cooldown = PlayerData.draw.cooldown;
+		const remain = DrawManager.getRemainingTime();
+		count.textContent =`💗 ×${DrawManager.getDrawCount()}`;
+
+		if(remain <= 0){
+			timer.textContent = "READY";
+			button.disabled = false;
+			button.classList.add("ready");
+		}
+		else
+		{
+			timer.textContent =	this.formatTime(remain);
+			button.disabled = true;
+		    button.classList.remove("ready");
+		}
+    },
+	
+	formatTime(sec){
+		sec = Math.ceil(sec);
+		const m = Math.floor(sec/60);
+		const s = sec%60;
+		return String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
+	},
+	
+	showResult(results){
+		this.results=results;
+		this.page=0;
+		this.pages=[];
+		for(let i=0;i<results.length;i+=this.pageSize){
+			this.pages.push(results.slice(i,i+this.pageSize));
+		}
+		this.showPage();
+	},
+	
+	showPage(){
+		const modal = document.getElementById("draw-modal");
+		const grid = document.getElementById("draw-grid");
+		const btn = document.getElementById("draw-close");
+
+		if(this.page == this.pages.length-1){
+			btn.classList.add("complete");
+			btn.textContent = "COMPLETE";
+		}else{
+			btn.textContent = `NEXT ${this.page+1}/${this.pages.length}`;
+		}
+
+		modal.classList.remove("hidden");
+		modal.style.display = "flex";
+		grid.innerHTML = "";
+		btn.disabled = true;
+		const cards = this.pages[this.page];
+		cards.forEach((data,index)=>{
+			const card = CardManager.getCard(data.id);
+			const element = this.createCard(card,data);
+			grid.appendChild(element);
+			setTimeout(()=>{element.querySelector(".draw-flip-card").classList.add("flip");},index*150);
+		});
+
+		const totalTime = cards.length*150+600;
+		setTimeout(()=>{btn.disabled=false;},totalTime);
+	},
+	
+	createCard(card,data){
+		const div=document.createElement("div");
+		div.className="draw-card";
+		div.innerHTML=`
+			<div class="draw-flip-card">
+				<div class="card-face card-back">
+					<div class="memory-logo">
+						MEMORY
+					</div>
+				</div>
+				<div class="card-face card-front">
+					<img src="./assets/images/${card.photo}">
+					${data.isNew?'<div class="card-new">NEW</div>':''}
+				</div>
+			</div>
+			<div class="card-count">${data.count > 1 ?`💗 ×${data.count}`:""}
+		</div>
+		`;
+		return div;
+	}
+};
+DrawUI.init();
