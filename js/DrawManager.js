@@ -18,7 +18,7 @@ window.DrawManager = {
             return [];
         }
 
-        const count = 1000;//this.getDrawCount();
+        const count = this.getDrawCount();
 		const result = {};
 
         for(let i=0;i<count;i++){
