@@ -78,6 +78,12 @@ window.DrawUI = {
     pageSize:10,
     pages:[],
 	
+	wait(ms){
+		return new Promise(resolve=>{
+			setTimeout(resolve,ms);
+		});
+	},
+	
     init() {
         const button = document.getElementById("draw-button");
         button.onclick = () => {
@@ -151,7 +157,7 @@ window.DrawUI = {
 		this.showPage();
 	},
 	
-	showPage(){
+	async showPage(){
 		const modal = document.getElementById("draw-modal");
 		const grid = document.getElementById("draw-grid");
 		const btn = document.getElementById("draw-close");
@@ -168,36 +174,79 @@ window.DrawUI = {
 		grid.innerHTML = "";
 		btn.disabled = true;
 		const cards = this.pages[this.page];
+		
 		cards.forEach((data,index)=>{
 			const card = CardManager.getCard(data.id);
 			const element = this.createCard(card,data);
+			element.style.animationDelay = `${index*180}ms`;
 			grid.appendChild(element);
-			setTimeout(()=>{element.querySelector(".draw-flip-card").classList.add("flip");},index*150);
 		});
-
-		const totalTime = cards.length*150+600;
-		setTimeout(()=>{btn.disabled=false;},totalTime);
+		
+		for(let index=0; index<cards.length; index++){
+			const data = cards[index];
+			const element = grid.children[index];
+			const card = CardManager.getCard(data.id);
+			await this.wait( index === 0 ? 500 : 180);
+			await DrawDirector.play(element, card, data);
+		}
+		
+		btn.disabled = false;
 	},
 	
 	createCard(card,data){
+		const rarity = card.rarity.toLowerCase();
 		const div=document.createElement("div");
-		div.className="draw-card";
+		div.className=`draw-card rarity-${rarity}`;
 		div.innerHTML=`
-			<div class="draw-flip-card">
+			<div class="draw-flip-card rarity-${rarity}">
 				<div class="card-face card-back">
 					<div class="memory-logo">
 						MEMORY
 					</div>
 				</div>
 				<div class="card-face card-front">
-					<img src="./assets/images/${card.photo}">
-					${data.isNew?'<div class="card-new">NEW</div>':''}
+					<div class="draw-rarity-glow"></div>
+					<div class="draw-card-frame">
+						<img class="draw-card-photo" src="./assets/images/${card.photo}" draggable="false">
+						<div class="draw-rarity-border"></div>
+						<div class="draw-particle-layer"></div>
+						${data.isNew?'<div class="draw-card-new">NEW</div>':''}
+					</div>
 				</div>
 			</div>
-			<div class="card-count">${data.count > 1 ?`💗 ×${data.count}`:""}
-		</div>
+			<div class="draw-card-count">${data.count > 1 ?`💗 ×${data.count}`:""}</div>
 		`;
+		const particleLayer = div.querySelector(".draw-particle-layer");
+		createParticles(particleLayer, rarity);
 		return div;
 	}
 };
+
+function createParticles(layer, rarity){
+	const count = {
+		common:0,
+		rare:1,
+		epic:3,
+		legend:10,
+		secret:15
+	}[rarity];
+
+
+	for(let i=0;i<count;i++){
+
+		const p=document.createElement("span");
+
+		p.className="draw-particle";
+
+		p.style.left=Math.random()*100+"%";
+		p.style.top=Math.random()*100+"%";
+
+		p.style.animationDelay= Math.random()*2+"s";
+
+		layer.appendChild(p);
+	}
+}
+
+
 DrawUI.init();
+

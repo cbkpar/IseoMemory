@@ -139,6 +139,27 @@ body{
     );
 }
 
+.secret {
+
+    border:2px solid #ff7bb7;
+
+    background:
+    linear-gradient(
+        135deg,
+        #fffdfb,
+        #fff6fb,
+        #faf5ff
+    );
+
+    box-shadow:
+        0 0 12px rgba(255,120,180,.25);
+
+}
+
+.secret img{
+    filter:saturate(1.15);
+}
+
 #draw-area{
 
     position:fixed;
@@ -200,6 +221,7 @@ body{
     grid-template-columns:repeat(5,1fr);
     justify-items:center;
     gap:24px 20px;
+    perspective:1200px;
 }
 
 #draw-progress-fill{
@@ -238,6 +260,52 @@ body{
     z-index:9999;
 }
 
+.draw-modal.secret{
+
+    background:
+
+    radial-gradient(
+
+        circle,
+
+        rgba(255,220,240,.18),
+
+        rgba(0,0,0,.8)
+
+    );
+
+}
+
+.draw-modal-content{
+    position:relative;
+    width:min(1100px,92vw);
+	
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    max-height:90vh;
+
+    overflow:hidden;
+
+    padding:30px;
+
+    border-radius:26px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fffefb,
+            #fff8f2
+        );
+	
+	
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.35);
+
+    animation:modalOpen .35s ease;
+}
+
 .draw-modal-bg{
     position:absolute;
     inset:0;
@@ -245,13 +313,7 @@ body{
     backdrop-filter:blur(4px);
 }
 
-.draw-modal-content{
-    position:relative;
-    width:min(900px,90vw);
-    padding:24px;
-    border-radius:18px;
-    background:white;
-}
+
 
 @keyframes modalOpen{
 
@@ -303,8 +365,6 @@ body{
 
     border-radius:5px;
 
-    overflow:hidden;
-
 }
 
 .card-back{
@@ -329,7 +389,7 @@ body{
 
     transform:rotateY(180deg);
 
-    background:white;
+    background:transparent;
 
 }
 
@@ -396,23 +456,6 @@ body{
 
 }
 
-.card-count{
-
-    width:100%;
-    height:24px;
-	
-    text-align:center;
-
-    margin-top:8px;
-
-    color:#ff5f8d;
-
-    font-size:16px;
-
-    font-weight:bold;
-
-}
-
 .card-front.legend{
 
     box-shadow:
@@ -430,6 +473,57 @@ body{
     flex-direction:column;
 
     align-items:center;
+	
+    opacity:0;
+
+    transform:
+        translateY(60px)
+        scale(.9);
+
+    animation:
+        cardEnter .45s ease forwards;
+
+    will-change:
+        transform,
+        opacity;
+
+		
+	transform-style:preserve-3d;
+
+}
+
+
+@keyframes cardEnter{
+
+    from{
+
+        opacity:0;
+
+        transform:
+            translateY(60px)
+            scale(.9);
+
+    }
+
+    70%{
+
+        opacity:1;
+
+        transform:
+            translateY(-6px)
+            scale(1.02);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
 
 }
 
@@ -443,7 +537,7 @@ body{
 
     transform-style:preserve-3d;
 
-    transition:1s;
+    transition: transform .8s cubic-bezier(.25,.8,.25,1);
 }
 
 .draw-flip-card.flip{
@@ -452,28 +546,589 @@ body{
 
 }
 
-.draw-modal-content{
+.draw-card-frame{
 
-    display:flex;
-    flex-direction:column;
-    align-items:center;
+    position:relative;
 
-    width: min(900px,90vw);
+    width:120px;
 
-    max-height:90vh;
+    aspect-ratio:1;
+
+    border-radius:18px;
 
     overflow:hidden;
 
-    padding:30px;
+    background:white;
 
-    border-radius:24px;
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.18);
+
+}
+
+.draw-card-photo{
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    position:absolute;
+	
+    z-index:1;
+
+    transform:scale(1.12);
+}
+
+.draw-card-front{
+
+    position:relative;
+    width:120px;
+	aspect-ratio:1;
+
+    overflow:visible;
+
+    border-radius:18px;
+
+}
+
+.draw-card-back{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
 
     background:
-    linear-gradient(
-        160deg,
-        #ffffff,
-        #f7f2ff
-    );
+        linear-gradient(
+            145deg,
+            #2f2f2f,
+            #151515
+        );
+
+    color:white;
+
+}
+
+.draw-rarity-border{
+
+    position:absolute;
+
+    inset:0;
+
+    z-index:3;
+
+    border-radius:18px;
+
+    border:3px solid transparent;
+
+    pointer-events:none;
+
+}
+
+.draw-rarity-glow {
+
+    position:absolute;
+
+    inset:0;
+
+    width:100%;
+    height:100%;
+
+    border-radius:18px;
+
+    transform:scale(1.12);
+
+    filter:blur(22px);
+
+    opacity:.25;
+
+    pointer-events:none;
+
+    z-index:0;
+
+}
+
+.draw-particle-layer{
+
+    position:absolute;
+
+    inset:0;
+	
+	overflow:hidden;
+	
+    z-index:4;
+
+    pointer-events:none;
+
+}
+
+.draw-new-normal{
+    animation:
+        drawPop .6s ease;
+}
+
+.draw-new-rare{
+    animation:
+        drawRare .8s ease;
+}
+
+.draw-new-epic{
+    animation:
+        drawEpic 1.2s cubic-bezier(.2,.8,.2,1);
+}
+
+.draw-new-legend{
+    animation:
+        drawLegend 1.8s cubic-bezier(.2,.8,.2,1);
+}
+
+.draw-new-secret{
+    animation:
+        drawSecret 2.5s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes drawPop{
+
+    0%{
+        transform:scale(.85);
+    }
+
+    60%{
+        transform:scale(1.08);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+
+}
+
+@keyframes drawRare{
+
+    0%{
+        transform:scale(.8);
+        filter:brightness(1);
+    }
+
+    50%{
+        transform:scale(1.1);
+        filter:brightness(1.25);
+    }
+
+    100%{
+        transform:scale(1);
+        filter:brightness(1);
+    }
+
+}
+
+@keyframes drawEpic{
+
+    0%{
+        transform:
+            scale(.75)
+            rotate(-3deg);
+
+        filter:
+            brightness(1);
+    }
+
+
+    35%{
+
+        transform:
+            scale(1.15)
+            rotate(3deg);
+
+        filter:
+            brightness(1.5);
+
+    }
+
+
+    60%{
+
+        transform:
+            scale(.96)
+            rotate(-1deg);
+
+    }
+
+
+    100%{
+
+        transform:
+            scale(1)
+            rotate(0);
+
+        filter:
+            brightness(1);
+
+    }
+
+}
+
+@keyframes drawLegend{
+
+    0%{
+
+        transform:
+            scale(.5);
+
+        filter:
+            brightness(1);
+
+    }
+
+
+    35%{
+
+        transform:
+            scale(1.25);
+
+        filter:
+            brightness(1.8);
+
+    }
+
+
+    55%{
+
+        transform:
+            scale(.95);
+
+    }
+
+
+    75%{
+
+        transform:
+            scale(1.05);
+
+    }
+
+
+    100%{
+
+        transform:
+            scale(1);
+
+        filter:
+            brightness(1);
+
+    }
+
+}
+
+@keyframes drawSecret{
+
+    0%{
+
+        transform:
+            scale(.3)
+            rotateY(180deg);
+
+        filter:
+            brightness(1);
+
+    }
+
+
+    30%{
+
+        transform:
+            scale(1.35)
+            rotateY(0deg);
+
+        filter:
+            brightness(2);
+
+    }
+
+
+    55%{
+
+        transform:
+            scale(.95);
+
+    }
+
+
+    75%{
+
+        transform:
+            scale(1.1);
+
+    }
+
+
+    100%{
+
+        transform:
+            scale(1);
+
+        filter:
+            brightness(1);
+
+    }
+
+}
+
+.draw-new-rare .draw-card-frame{
+
+    box-shadow:
+        0 0 12px #59b8ff,
+        0 0 30px rgba(89,184,255,.55);
+
+}
+
+.draw-new-epic .draw-card-frame{
+
+    box-shadow:
+        0 0 18px #b86cff,
+        0 0 42px rgba(184,108,255,.65);
+
+}
+
+.draw-new-legend .draw-card-frame{
+
+    box-shadow:
+        0 0 22px #ffd64d,
+        0 0 60px rgba(255,214,77,.85);
+
+}
+
+.draw-new-secret .draw-card-frame{
+
+    animation:secretGlow 2s infinite;
+
+}
+
+
+.draw-card-new{
+
+    position:absolute;
+
+    top:8px;
+
+    right:-30px;
+
+    width:110px;
+
+    text-align:center;
+
+    transform:rotate(45deg);
+
+    background:#ff4374;
+
+    color:white;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+    letter-spacing:2px;
+
+    padding:4px 0;
+
+    box-shadow:
+        0 5px 12px rgba(0,0,0,.25);
+		
+    z-index:5;
+
+}
+
+.draw-card-count{
+
+    width:100%;
+    height:24px;
+	
+    text-align:center;
+
+    margin-top:8px;
+
+    color:#ff5f8d;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+}
+
+.rarity-normal .draw-rarity-border{
+
+    border-color:#c7c7c7;
+
+}
+
+.rarity-rare .draw-rarity-border{
+
+    border-color:#3aa0ff;
+
+}
+
+.rarity-rare .draw-rarity-glow{
+
+    opacity:.45;
+
+    background:#5ab5ff;
+
+}
+
+.rarity-epic .draw-rarity-border{
+
+    border-color:#a64cff;
+
+}
+
+.rarity-epic .draw-rarity-glow{
+
+    opacity:.55;
+
+    background:#b348ff;
+
+}
+
+.rarity-legend .draw-rarity-border{
+
+    border-color:#ffcb43;
+
+}
+
+.rarity-legend .draw-rarity-glow{
+
+    opacity:.8;
+
+    background:#ffd54a;
+
+    animation:
+        legendGlow 2s infinite alternate;
+
+}
+
+.rarity-secret .draw-rarity-border{
+
+    border:3px solid transparent;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff4ec7,
+            #5d7dff,
+            #5dffce,
+            #ffe25f,
+            #ff4ec7
+        ) border-box;
+
+    -webkit-mask:
+        linear-gradient(#fff 0 0) padding-box,
+        linear-gradient(#fff 0 0);
+
+    -webkit-mask-composite:xor;
+
+    mask-composite:exclude;
+
+}
+
+.rarity-secret .draw-rarity-glow{
+
+    opacity:1;
+
+    background:
+        radial-gradient(circle,#ffffff 0%,transparent 70%);
+
+    animation:
+        secretGlow 3s linear infinite;
+
+}
+
+@keyframes legendGlow{
+
+    from{
+
+        transform:scale(.95);
+
+        opacity:.5;
+
+    }
+
+    to{
+
+        transform:scale(1.1);
+
+        opacity:.9;
+
+    }
+
+}
+
+@keyframes secretGlow{
+
+    from{
+
+        transform:rotate(0deg);
+
+    }
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+
+.draw-particle{
+
+    position:absolute;
+
+    width:4px;
+    height:4px;
+
+    border-radius:50%;
+
+    background:white;
+
+    opacity:.7;
+
+    animation:
+        particle-float
+        2s ease-in-out infinite;
+
+}
+
+
+@keyframes particle-float{
+
+    0%{
+
+        transform:
+            translateY(10px)
+            scale(.8);
+
+        opacity:0;
+
+    }
+
+
+    50%{
+
+        opacity:1;
+
+    }
+
+
+    100%{
+
+        transform:
+            translateY(-30px)
+            scale(1.2);
+
+        opacity:0;
+
+    }
 
 }
 
@@ -728,6 +1383,47 @@ body{
 
     0 0 25px gold,
     0 0 50px rgba(255,215,0,.4);
+
+}
+
+.detail-content.secret{
+
+    border:3px solid #ff7bb7;
+
+    background:
+    linear-gradient(
+        180deg,
+        #fffefa,
+        #fff7fb
+    );
+
+}
+
+.detail-content.secret #detail-effect{
+
+    background:#fff2f8;
+
+    color:#ff4d8f;
+
+}
+
+.detail-content.secret #detail-title{
+
+    color:#ff2d75;
+
+    font-weight:700;
+
+}
+
+.detail-content.secret #detail-level{
+
+    color:#ff6aa5;
+
+}
+
+.detail-content.secret #detail-date{
+
+    border-top:1px solid #ffd2e5;
 
 }
 
