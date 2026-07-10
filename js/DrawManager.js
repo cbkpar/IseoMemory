@@ -2,15 +2,26 @@ window.DrawManager = {
 
     canDraw(){
         const now = Date.now();
-        return now - PlayerData.draw.lastDrawTime >= PlayerData.draw.cooldown * 1000;
+        return now - PlayerData.draw.lastDrawTime >= this.getCooldown() * 1000;
     },
 
 	getRemainingTime(){
 		const now = Date.now();
 		const elapsed = (now - PlayerData.draw.lastDrawTime) / 1000;
-		const remain = PlayerData.draw.cooldown - elapsed;
-		return Math.max(0, remain);
+        const remain = this.getCooldown() - elapsed;
+        return Math.max(0, remain);
 	},
+
+    getCooldown(){
+        const base = PlayerData.draw.baseCooldown ?? 3;
+        const reduction = PlayerData.ownedCards.reduce((total, owned) => {
+            const card = CardManager.getCard(owned.id);
+            return card?.skill === "DRAW_COOLDOWN"
+                ? total + (CardManager.getSkillValue(card, owned) / 1000)
+                : total;
+        }, 0);
+        return Math.max(.5, Number((base - reduction).toFixed(3)));
+    },
 
     draw(){
         if(!this.canDraw()){
@@ -18,6 +29,7 @@ window.DrawManager = {
             return [];
         }
 
+		PlayerData.lastUnlockedChapter = null;
         const count = this.getDrawCount();
 		const result = {};
 
@@ -43,7 +55,10 @@ window.DrawManager = {
 		
 
 		Player.checkChapterUnlock();
-        PlayerData.draw.lastDrawTime = Date.now();
+        const points = this.grantPoints(displayResult);
+		PlayerData.lastPointGain = points;
+        PlayerData.totalDraws += count;
+		PlayerData.draw.lastDrawTime = Date.now();
 		SaveManager.save();
 		
         return displayResult;
@@ -62,7 +77,21 @@ window.DrawManager = {
 
 		return count;
 	},
-	
+
+    grantPoints(result){
+        if (!PlayerData.features.points) return 0;
+
+        const bonus = PlayerData.ownedCards.reduce((total, owned) => {
+            const card = CardManager.getCard(owned.id);
+            return card?.skill === "POINT_GAIN"
+                ? total + CardManager.getSkillValue(card, owned)
+                : total;
+        }, 0);
+        const gained = (result.reduce((total, item) => total + item.count, 0) * 10) + bonus;
+        PlayerData.points += gained;
+        return gained;
+    },
+
 	randomCard(){
 		const cards = CardManager.getAvailableCards();
 

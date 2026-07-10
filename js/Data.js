@@ -1,6 +1,6 @@
 ﻿window.GameData = {
 
-    version:"1.0.4",
+    version:"0.1.5",
 
     chapters:[
         {
@@ -439,7 +439,7 @@
             photo:"card0025.png",
             requires:["MEM-0024"],
             maxLevel:40,
-            skill:"UNLOCK_CHAPTER",
+            skill:"UNLOCK_POINTS",
             skillValue:1,
             skillValueWeight:0
         },

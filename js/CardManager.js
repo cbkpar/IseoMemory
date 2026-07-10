@@ -1,9 +1,10 @@
 window.CardManager = {
 
 	SkillText: {
+		UNLOCK_POINTS(){return "기억 포인트 기능 해금";},
 		DRAW_COUNT(value){return `기억 발견 횟수 +${value}`;},
-		POINT_GAIN(value){return `복원 점수 +${value}`;},
-		DRAW_COOLDOWN(value){return `탐색 대기시간 -${value/1000}초`;},
+		POINT_GAIN(value){return `기억 포인트 +${value}`;},
+		DRAW_COOLDOWN(value){return `탐색 대기시간 -${(value / 1000).toFixed(3)}초`;},
 		UNLOCK_CHAPTER(value){return `새로운 챕터 해금`;}
 	},
 
@@ -82,7 +83,8 @@ window.CardManager = {
 	
 	getAvailableCards(){
 		return GameData.cards.filter(card=>{
-        if(!PlayerData.unlockedChapters.includes(card.chapterId)) return false;
+		const chapter = GameData.chapters.find(chapter => chapter.cards.includes(card.id));
+        if(!chapter || !PlayerData.unlockedChapters.includes(chapter.id)) return false;
         return card.requires.every(req=>Player.hasCard(req));
 		});
 	},

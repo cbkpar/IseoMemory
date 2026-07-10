@@ -19,6 +19,16 @@ window.SaveManager = {
 		if(!saveData.player) return;
 		
         Object.assign(PlayerData, saveData.player);
+		PlayerData.features = { points:false };
+		PlayerData.draw = { baseCooldown:3, lastDrawTime:0, baseCount:1, ...(PlayerData.draw || {}) };
+		PlayerData.draw.baseCooldown = 3;
+		PlayerData.points ??= 0;
+		PlayerData.totalDraws ??= 0;
+		PlayerData.lastPointGain ??= 0;
+		PlayerData.lastUnlockedChapter ??= null;
+		PlayerData.favoriteCards ??= [];
+		PlayerData.memoryNotes ??= {};
+		PlayerData.ownedCards.forEach(card => Player.applyCardUnlock(card.id));
 		
 		console.log("불러오기 완료", saveData.version);
     },

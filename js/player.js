@@ -17,19 +17,38 @@ window.Player = {
 			count: amount,
             resonance: amount-1
         });
+        this.applyCardUnlock(cardId);
         return true;
+    },
+
+    applyCardUnlock(cardId) {
+        const card = CardManager.getCard(cardId);
+        if (!card) return;
+
+        if (card.skill === "UNLOCK_POINTS") {
+            PlayerData.features.points = true;
+        }
+        if (card.skill === "UNLOCK_CHAPTER") {
+            this.unlockNextChapter(card.chapterId);
+        }
+    },
+
+    unlockNextChapter(chapterId) {
+        const index = GameData.chapters.findIndex(chapter => chapter.id === chapterId);
+        const next = GameData.chapters[index + 1];
+        if (next && !PlayerData.unlockedChapters.includes(next.id)) {
+            PlayerData.unlockedChapters.push(next.id);
+            PlayerData.lastUnlockedChapter = next.id;
+            return next;
+        }
+        return null;
     },
 	
 	checkChapterUnlock(){
 		GameData.chapters.forEach(chapter=>{
 			if(CardManager.isChapterComplete(chapter.id))
 			{				
-	            const index = GameData.chapters.indexOf(chapter);
-				const next = GameData.chapters[index+1];
-				if( next && !PlayerData.unlockedChapters.includes(next.id))
-				{
-					PlayerData.unlockedChapters.push(next.id);
-				}
+				this.unlockNextChapter(chapter.id);
 			}
 		});
 	},
@@ -62,8 +81,20 @@ window.PlayerData = {
         "CH-000"
     ],
 
+    features: {
+        points: false
+    },
+
+    points: 0,
+    totalDraws: 0,
+    lastPointGain: 0,
+    lastUnlockedChapter: null,
+
+    favoriteCards: [],
+    memoryNotes: {},
+
     draw: {
-        cooldown: 3,
+        baseCooldown: 3,
         lastDrawTime:0,
 		baseCount:1,
     }

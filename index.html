@@ -18,6 +18,9 @@
 <div id="main" style="display:none">
 	<div id="album" class="album-container">
 		<div class="album-header"> ISEO'S PHOTO ALBUM </div>
+		<button id="history-open" class="history-open" type="button">⌁ 우리의 시간선</button>
+		<div id="player-status" class="player-status"></div>
+		<div id="chapter-tabs" class="chapter-tabs"></div>
 		<div id="album-progress" class="album-progress"></div>
 		<div id="card-list" class="card-list"></div>
 	</div>
@@ -42,6 +45,19 @@
 	</div>
 </div>
 
+<div id="history-modal" class="history-modal hidden">
+	<div class="history-modal-bg"></div>
+	<div class="history-content">
+		<div class="history-heading">
+			<div><p>ISEO MEMORY ARCHIVE</p><h2>우리의 시간선</h2></div>
+			<button id="history-close" type="button" aria-label="히스토리 닫기">×</button>
+		</div>
+		<div id="history-summary" class="history-summary"></div>
+		<button id="history-random" class="history-random" type="button">랜덤 추억 다시 보기</button>
+		<div id="history-list" class="history-list"></div>
+	</div>
+</div>
+
 <div id="draw-modal" class="draw-modal hidden">
     <div class="draw-modal-bg"></div>
     <div class="draw-modal-content">
@@ -63,9 +79,13 @@
         <div id="detail-stars"></div>
 		<div id="detail-level"></div>
         <div id="detail-count"></div>
-		<div id="detail-effect"></div>
+        <div id="detail-effect"></div>
         <div id="detail-date"></div>
         <div id="detail-desc"></div>
+		<button id="favorite-button" class="favorite-button" type="button">☆ 좋아하는 사진</button>
+		<label class="memory-note-label" for="detail-note">이 사진에 남기는 한 줄</label>
+		<textarea id="detail-note" maxlength="180" placeholder="오늘 이 사진을 보며 떠오른 마음을 적어 보세요."></textarea>
+		<button id="note-save" class="note-save" type="button">메모 저장하기</button>
     </div>
 </div>
 

@@ -1,4 +1,10 @@
 window.UI = {
+  	wait(ms){
+  		return new Promise(resolve=>{
+  			setTimeout(resolve,ms);
+  		});
+  	},
+    
     showMemory(memory) {
         if (!memory) {
             return;
@@ -43,6 +49,7 @@ window.UI = {
 		content.className = "detail-content " + card.rarity.toLowerCase();
 		
 		const modal = document.getElementById("detail-modal");
+		document.getElementById("note-save").textContent = "메모 저장하기";
 
 		modal.onclick = (e)=>{
 			if(e.target.classList.contains("detail-modal-bg")){
@@ -66,8 +73,92 @@ window.UI = {
 		const skillValue = CardManager.getSkillValue(card, playerCard);
 		const skillText = CardManager.SkillText[card.skill] ? CardManager.SkillText[card.skill](skillValue): card.skill;
 		document.getElementById("detail-effect").textContent =`✨ ${skillText}`;
+
+		const favoriteButton = document.getElementById("favorite-button");
+		const isFavorite = PlayerData.favoriteCards.includes(card.id);
+		favoriteButton.textContent = isFavorite ? "★ 좋아하는 사진에서 빼기" : "☆ 좋아하는 사진으로 담기";
+		favoriteButton.onclick = () => {
+			const index = PlayerData.favoriteCards.indexOf(card.id);
+			if (index === -1) PlayerData.favoriteCards.push(card.id);
+			else PlayerData.favoriteCards.splice(index, 1);
+			SaveManager.save();
+			this.showCardDetail(data);
+			CardUI.renderCards(CardUI.activeChapterId);
+		};
+
+		const note = document.getElementById("detail-note");
+		note.value = PlayerData.memoryNotes[card.id] || "";
+		document.getElementById("note-save").onclick = async () => {
+			const text = note.value.trim();
+			if (text) PlayerData.memoryNotes[card.id] = text;
+			else delete PlayerData.memoryNotes[card.id];
+			SaveManager.save();
+			document.getElementById("note-save").textContent = "저장했어요 ✓";
+      await new Promise(resolve => setTimeout(resolve, 500));
+      modal.classList.add("hidden");
+		};
 	}
 
+};
+
+window.HistoryUI = {
+	init(){
+		document.getElementById("history-open").onclick = () => this.open();
+		document.getElementById("history-close").onclick = () => this.close();
+		document.querySelector(".history-modal-bg").onclick = () => this.close();
+		document.getElementById("history-random").onclick = () => this.openRandomCard();
+	},
+
+	open(){
+		this.render();
+		document.getElementById("history-modal").classList.remove("hidden");
+	},
+
+	close(){
+		document.getElementById("history-modal").classList.add("hidden");
+	},
+
+	render(){
+		const list = document.getElementById("history-list");
+		const summary = document.getElementById("history-summary");
+		const cards = PlayerData.ownedCards
+			.map(owned => ({ card:CardManager.getCard(owned.id), owned }))
+			.filter(item => item.card)
+			.sort((a, b) => a.card.date.localeCompare(b.card.date) || a.card.order - b.card.order);
+		summary.innerHTML = cards.length
+			? `<span>${cards[0].card.date}부터</span><strong>${cards.length}장의 기억을 시간순으로 모았어요</strong>`
+			: `<span>아직 사진이 없어요</span><strong>첫 기억이 이곳에서 시작돼요</strong>`;
+		list.innerHTML = "";
+		if (!cards.length) {
+			list.innerHTML = '<p class="history-empty">발견한 사진이 생기면, 그날의 시간선이 이곳에 이어져요.</p>';
+			return;
+		}
+
+		cards.forEach(({ card, owned }) => {
+			const item = document.createElement("article");
+			item.className = "history-entry";
+			item.innerHTML = `
+				<time>${card.date}</time>
+				<button class="history-card" data-card-id="${card.id}" type="button">${card.title}${owned.count > 1 ? ` ×${owned.count}` : ""}</button>
+				<p>${card.description}</p>
+			`;
+			const button = item.querySelector(".history-card");
+			button.onclick = () => {
+				this.close();
+				UI.showCardDetail({ id:card.id, count:owned.count });
+			};
+			list.appendChild(item);
+		});
+	},
+
+	openRandomCard(){
+		const cards = PlayerData.ownedCards;
+		if (!cards.length) return;
+		const picked = cards[Math.floor(Math.random() * cards.length)];
+		this.close();
+		const owned = CardManager.getOwnedCard(picked.id);
+		if (owned) UI.showCardDetail({ id:picked.id, count:owned.count });
+	}
 };
 
 window.DrawUI = {
@@ -94,7 +185,7 @@ window.DrawUI = {
 				fill.style.transition = "none";
 				fill.style.width = "0%";
 				void fill.offsetWidth;
-				fill.style.transition = `${PlayerData.draw.cooldown}s linear`;
+				fill.style.transition = `${DrawManager.getCooldown()}s linear`;
 				fill.style.width = "100%";
 			}
 			
@@ -118,12 +209,11 @@ window.DrawUI = {
         setInterval(() => { this.updateTimer(); }, 50);
     },
 
-    updateTimer() {
+	updateTimer() {
 		const button = document.getElementById("draw-button");
 		const timer = document.getElementById("draw-timer");
 		const count = document.getElementById("draw-count");
 		const fill = document.getElementById("draw-progress-fill");
-		const cooldown = PlayerData.draw.cooldown;
 		const remain = DrawManager.getRemainingTime();
 		count.textContent =`💗 ×${DrawManager.getDrawCount()}`;
 
@@ -146,6 +236,15 @@ window.DrawUI = {
 		const s = sec%60;
 		return String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
 	},
+
+	skipCooldownWithPoints(){
+		if (!PlayerData.features.points || PlayerData.points < 100 || DrawManager.canDraw()) return;
+		PlayerData.points -= 100;
+		PlayerData.draw.lastDrawTime = 0;
+		SaveManager.save();
+		this.updateTimer();
+		CardUI.renderStatus();
+	},
 	
 	showResult(results){
 		this.results=results;
@@ -161,6 +260,13 @@ window.DrawUI = {
 		const modal = document.getElementById("draw-modal");
 		const grid = document.getElementById("draw-grid");
 		const btn = document.getElementById("draw-close");
+		const title = document.querySelector(".draw-title");
+		const unlocked = GameData.chapters.find(chapter => chapter.id === PlayerData.lastUnlockedChapter);
+		title.textContent = unlocked
+			? `새 사진첩이 열렸어요 · ${unlocked.title}`
+			: PlayerData.lastPointGain > 0
+				? `오늘의 사진 : +${PlayerData.lastPointGain} P`
+				: "오늘의 사진 ";
 
 		if(this.page == this.pages.length-1){
 			btn.classList.add("complete");

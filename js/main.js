@@ -11,6 +11,7 @@ window.onload = function () {
         boot.style.display = "none";
         main.style.display = "block";
         DrawUI.init();
+		CardUI.init();
         CardUI.renderCards("CH-000");
         return;
     }
@@ -30,6 +31,7 @@ window.onload = function () {
         boot.style.display = "none";
         main.style.display = "block";
 		DrawUI.init();
+		CardUI.init();
 		CardUI.renderCards("CH-000");
     };
 };
