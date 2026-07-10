@@ -9,7 +9,7 @@ window.UI = {
 		<div class="memory-album">
 
 			<div class="memory-header">
-				MEMORY RECOVERY
+				ISEO MEMORY
 			</div>
 
 			<div class="memory-chapter">
@@ -44,11 +44,11 @@ window.UI = {
 		
 		const modal = document.getElementById("detail-modal");
 
-		modal.addEventListener("click",(e)=>{
+		modal.onclick = (e)=>{
 			if(e.target.classList.contains("detail-modal-bg")){
-				e.currentTarget.classList.add("hidden");
+				modal.classList.add("hidden");
 			}
-		});
+		};
 		modal.classList.remove("hidden");
 
 		const playerCard = PlayerData.ownedCards.find(c => c.id === data.id);
@@ -60,9 +60,8 @@ window.UI = {
 		document.getElementById("detail-title").textContent = card.title;
 		document.getElementById("detail-date").textContent = "📅 " + card.date;
 		document.getElementById("detail-desc").textContent = card.description;
-		document.getElementById("detail-stars").textContent = "⭐".repeat(card.level);
+		document.getElementById("detail-stars").textContent = "💗".repeat(Math.min(level,7));
 		document.getElementById("detail-level").textContent = `LV ${level} (${exp} / ${maxExp})`;
-		document.getElementById("detail-count").textContent = "💗".repeat(Math.min(data.count,7));
 		
 		const skillValue = CardManager.getSkillValue(card, playerCard);
 		const skillText = CardManager.SkillText[card.skill] ? CardManager.SkillText[card.skill](skillValue): card.skill;
@@ -85,6 +84,7 @@ window.DrawUI = {
 	},
 	
     init() {
+        //this.pageSize = window.matchMedia("(max-width: 640px)").matches ? 4 : 10;
         const button = document.getElementById("draw-button");
         button.onclick = () => {
             const result = DrawManager.draw();
@@ -164,9 +164,9 @@ window.DrawUI = {
 
 		if(this.page == this.pages.length-1){
 			btn.classList.add("complete");
-			btn.textContent = "COMPLETE";
+			btn.textContent = "확인";
 		}else{
-			btn.textContent = `NEXT ${this.page+1}/${this.pages.length}`;
+			btn.textContent = `다음 ${this.page+1}/${this.pages.length}`;
 		}
 
 		modal.classList.remove("hidden");
@@ -247,6 +247,4 @@ function createParticles(layer, rarity){
 	}
 }
 
-
-DrawUI.init();
 

@@ -1,19 +1,24 @@
-<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="css/style.css"></head>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><link rel="stylesheet" href="css/style.css"></head>
 <body>
 <div id="boot">
-	<h1>MEMORY RECOVERY PROJECT</h1>
-	
-    <pre id="boot-log"></pre>
-    <div id="boot-progress">
-		<div id="boot-bar"></div>
+	<div class="album-cover" aria-hidden="true">
+		<div class="cover-photo"><img src="./assets/images/card0001.png" alt=""></div>
+		<p>OUR LITTLE STORY</p>
+		<div class="cover-title">Iseo<br><em>Memory</em></div>
+		<span class="cover-date">2025 —</span>
 	</div>
-	<button id="bootBtn">
-		첫 번째 기억 복원
-	</button>
+	<div class="prologue-intro">
+		<p class="prologue-kicker">OUR FIRST PHOTO ALBUM</p>
+		<h1>너를 기다린<br>모든 장면들</h1>
+		<p class="prologue-copy">아직 만나지 못한 너를 향해<br>두 사람이 한 장씩 채워 온 사진첩</p>
+		<button id="bootBtn">사진첩 펼쳐 보기 <span>→</span></button>
+		<p class="prologue-note">for our little Iseo</p>
+	</div>
 </div>
 <div id="main" style="display:none">
 	<div id="album" class="album-container">
-		<div class="album-header"> MY PHOTO ALBUM </div>
+		<div class="album-header"> ISEO'S PHOTO ALBUM </div>
+		<div id="album-progress" class="album-progress"></div>
 		<div id="card-list" class="card-list"></div>
 	</div>
 	<div id="log"></div>
@@ -41,7 +46,7 @@
     <div class="draw-modal-bg"></div>
     <div class="draw-modal-content">
         <div class="draw-header">
-            <div class="draw-title"> MEMORY RECOVERY </div>
+			<div class="draw-title">MEMORY RECOVERY</div>
         </div>
         <div id="draw-grid" class="draw-grid"></div>
         <div class="modal-footer">

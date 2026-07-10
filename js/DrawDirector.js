@@ -38,7 +38,7 @@ window.DrawDirector = {
                 await this.playLegend(cardElement);
                 break;
 
-            case "secret":
+            case "SECRET":
                 await this.playSecret(cardElement);
                 break;
 
