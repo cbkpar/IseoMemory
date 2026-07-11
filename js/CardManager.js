@@ -92,10 +92,17 @@ window.CardManager = {
 	getSkillValue(card, owned){
 		const level = owned?.level ?? 1;
 		return card.skillValue + (level - 1);
-	}
-	
+	},
 
-	
-	
+	countOwnedByRarity(rarity){
+		return PlayerData.ownedCards.filter(owned => {
+			const card = this.getCard(owned.id);
+			return card && card.rarity === rarity;
+		}).length;
+	},
+
+	countTotalByRarity(rarity){
+		return GameData.cards.filter(card => card.rarity === rarity).length;
+	}
 
 };

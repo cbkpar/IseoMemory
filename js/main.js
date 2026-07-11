@@ -29,6 +29,7 @@ window.onload = async function () {
 		// 최초 실행
         if(PlayerData.ownedCards.length === 0){
 			Player.addCard("MEM-0001");
+			Player.updateStreak();
             SaveManager.save();
         }
 

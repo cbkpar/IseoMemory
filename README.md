@@ -1,37 +1,132 @@
-# MEMORY RECOVERY
+# 📷 MEMORY
 
-사진을 수집하고 복원하는 카드 수집형 방치 게임
+> **추억을 수집하는 감성 사진 앨범 컬렉션 게임**
 
-## 🎮 Play
+사진 한 장에는 그 순간의 추억이 담겨 있습니다.
 
-▶ https://cbkpar.github.io/IseoMemory/
+**MEMORY**는 사진을 수집하고, 성장시키며, 나만의 앨범을 완성해 나가는 웹 기반 카드 컬렉션 게임입니다.
 
-## 📌 Features
+---
 
-- 📷 Memory Card Collection
-- 🎴 Card Draw System
-- ✨ Card Flip Animation
-- 💗 Duplicate Card Resonance System
-- ⭐ Card Level System
-- 🔓 Chapter Unlock System
+## 🚀 실행 방법
 
-## 🛠 Tech Stack
+1. 저장소를 Clone 합니다.
 
-- HTML
-- CSS
-- JavaScript
-- LocalStorage
+```bash
+git clone https://github.com/cbkpar/IseoMemory.git
+```
 
-## 📱 Screenshot
+또는 ZIP 파일을 다운로드합니다.
 
-(스크린샷 추가 예정)
+2. `index.html`을 실행합니다.
 
-## 🚧 Development
+또는 GitHub Pages에서 바로 플레이할 수 있습니다.
 
-현재 개발 중인 프로젝트입니다.
+👉 https://cbkpar.github.io/IseoMemory/
 
-구현 예정:
-- 카드 성장 시스템
-- 챕터 확장
-- 추가 기억 데이터
-- 능력치 시스템 강화
+---
+
+## ✨ 주요 기능
+
+### 📖 사진 앨범
+
+* 챕터별 사진 수집
+* 사진 상세 정보 확인
+* 즐겨찾기 기능
+* 메모 작성 기능
+* 획득 이력(History) 확인
+
+### 🎴 카드 뽑기
+
+* 카드 뒤집기(Flip) 연출
+* 희귀도별 테두리 및 Glow 효과
+* NEW 카드 전용 연출
+* 등급별 파티클 효과
+* 카드 상세 보기 연동
+
+### ⭐ 카드 성장
+
+* 카드 레벨 시스템
+* 공명(Resonance) 시스템
+* 카드 효과(스킬) 적용
+
+### 💾 데이터 저장
+
+* LocalStorage 자동 저장
+* 즐겨찾기 저장
+* 메모 저장
+* 카드 수집 현황 저장
+
+### 📱 모바일 지원
+
+* 반응형 UI
+* 모바일 환경 최적화
+* 터치 인터페이스 지원
+
+---
+
+## 🎨 희귀도
+
+| 등급        | 설명        |
+| --------- | --------- |
+| Common    | 기본 사진     |
+| Rare      | 희귀 사진     |
+| Epic      | 특별한 추억    |
+| Legendary | 매우 희귀한 사진 |
+| Secret    | 숨겨진 특별 사진 |
+
+---
+
+## 🛠 사용 기술
+
+* HTML5
+* CSS3
+* JavaScript (ES6+)
+* LocalStorage
+
+---
+
+## 📁 프로젝트 구조
+
+```text
+assets/
+ ├─ images/
+ ├─ css/
+ ├─ js/
+ └─ data/
+
+index.html
+README.md
+```
+
+---
+
+
+## 🎯 개발 목표
+
+* 사진을 수집하는 감성을 담은 컬렉션 게임 제작
+* 모바일에서도 편안한 사용 경험 제공
+* 화려하면서도 부담스럽지 않은 카드 연출 구현
+* 추억을 기록하고 간직할 수 있는 디지털 사진 앨범 구현
+
+---
+
+## 📌 개발 현황
+
+* ✅ 카드 수집
+* ✅ 카드 뽑기
+* ✅ 카드 뒤집기 애니메이션
+* ✅ NEW 카드 연출
+* ✅ 희귀도 효과
+* ✅ 카드 성장
+* ✅ 즐겨찾기
+* ✅ 메모 기능
+* ✅ 히스토리
+* ✅ 모바일 최적화
+* 🚧 지속적인 콘텐츠 추가 예정
+
+---
+
+## 📄 라이선스
+
+개인 프로젝트입니다.

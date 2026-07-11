@@ -82,6 +82,7 @@ window.UI = {
 			if (index === -1) PlayerData.favoriteCards.push(card.id);
 			else PlayerData.favoriteCards.splice(index, 1);
 			SaveManager.save();
+			AchievementManager.checkAll();
 			this.showCardDetail(data);
 			CardUI.renderCards(CardUI.activeChapterId);
 		};
@@ -93,10 +94,95 @@ window.UI = {
 			if (text) PlayerData.memoryNotes[card.id] = text;
 			else delete PlayerData.memoryNotes[card.id];
 			SaveManager.save();
+			AchievementManager.checkAll();
 			document.getElementById("note-save").textContent = "저장했어요 ✓";
       await new Promise(resolve => setTimeout(resolve, 500));
       modal.classList.add("hidden");
 		};
+
+		const downloadButton = document.getElementById("detail-download");
+		if (downloadButton) {
+			downloadButton.onclick = () => this.downloadCard(card, playerCard);
+		}
+	},
+
+	async downloadCard(card, playerCard){
+		const button = document.getElementById("detail-download");
+		const originalText = button.textContent;
+		button.textContent = "이미지 만드는 중...";
+		button.disabled = true;
+
+		try {
+			const photo = await this.loadImage("./assets/images/" + card.photo);
+
+			const width = 900;
+			const height = 1120;
+			const canvas = document.createElement("canvas");
+			canvas.width = width;
+			canvas.height = height;
+			const ctx = canvas.getContext("2d");
+
+			// 배경
+			ctx.fillStyle = "#fffaf5";
+			ctx.fillRect(0, 0, width, height);
+
+			// 사진 (cover fit)
+			const photoBoxW = width - 100;
+			const photoBoxH = 860;
+			const photoBoxX = 50;
+			const photoBoxY = 50;
+			const scale = Math.max(photoBoxW / photo.width, photoBoxH / photo.height);
+			const drawW = photo.width * scale;
+			const drawH = photo.height * scale;
+			ctx.save();
+			ctx.beginPath();
+			ctx.rect(photoBoxX, photoBoxY, photoBoxW, photoBoxH);
+			ctx.clip();
+			ctx.drawImage(photo, photoBoxX + (photoBoxW - drawW) / 2, photoBoxY + (photoBoxH - drawH) / 2, drawW, drawH);
+			ctx.restore();
+
+			// 텍스트 영역
+			ctx.fillStyle = "#55463d";
+			ctx.font = "600 34px Georgia, serif";
+			ctx.textBaseline = "alphabetic";
+			ctx.fillText(card.title, 50, 960);
+
+			ctx.fillStyle = "#a4604b";
+			ctx.font = "20px Georgia, serif";
+			ctx.fillText(`📅 ${card.date}`, 50, 1000);
+
+			ctx.fillStyle = "#b48372";
+			ctx.font = "13px Georgia, serif";
+			ctx.fillText("ISEO MEMORY", 50, 1040);
+
+			const level = playerCard?.level ?? 1;
+			ctx.textAlign = "right";
+			ctx.fillStyle = "#c17058";
+			ctx.font = "16px Georgia, serif";
+			ctx.fillText(`LV ${level}`, width - 50, 1040);
+			ctx.textAlign = "left";
+
+			const link = document.createElement("a");
+			link.download = `iseo-memory-${card.id}.png`;
+			link.href = canvas.toDataURL("image/png");
+			link.click();
+		} catch (err) {
+			console.error(err);
+			alert("이미지를 만드는 중 문제가 발생했어요.");
+		} finally {
+			button.textContent = originalText;
+			button.disabled = false;
+		}
+	},
+
+	loadImage(src){
+		return new Promise((resolve, reject) => {
+			const img = new Image();
+			img.crossOrigin = "anonymous";
+			img.onload = () => resolve(img);
+			img.onerror = reject;
+			img.src = src;
+		});
 	}
 
 };
@@ -315,6 +401,7 @@ window.HistoryUI = {
 				if (index === -1) PlayerData.favoriteCards.push(card.id);
 				else PlayerData.favoriteCards.splice(index, 1);
 				SaveManager.save();
+				AchievementManager.checkAll();
 				this.renderSummary();
 				if (this.filters.favoriteOnly) this.renderList();
 				else {

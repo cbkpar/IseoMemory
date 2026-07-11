@@ -28,7 +28,14 @@ window.SaveManager = {
 		PlayerData.lastUnlockedChapter ??= null;
 		PlayerData.favoriteCards ??= [];
 		PlayerData.memoryNotes ??= {};
+		PlayerData.unlockedAchievements ??= [];
+		PlayerData.streak ??= { count:0, best:0, lastVisit:null };
+		PlayerData.streak.count ??= 0;
+		PlayerData.streak.best ??= 0;
+		PlayerData.streak.lastVisit ??= null;
 		PlayerData.ownedCards.forEach(card => Player.applyCardUnlock(card.id));
+		PlayerData.ownedCards.forEach(card => { card.obtainedAt ??= null; });
+		Player.updateStreak();
 		
 		console.log("불러오기 완료", saveData.version);
     },

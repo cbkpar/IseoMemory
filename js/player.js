@@ -15,7 +15,8 @@ window.Player = {
             id: cardId,
             level: 1,
 			count: amount,
-            resonance: amount-1
+            resonance: amount-1,
+            obtainedAt: Date.now()
         });
         this.applyCardUnlock(cardId);
         return true;
@@ -69,8 +70,31 @@ window.Player = {
 			cardData.level++;
 			required = this.getRequiredExp(cardData.level);
 		}
+	},
+
+	todayKey(){
+		const d = new Date();
+		return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+	},
+
+	// 하루 한 번, 방문할 때마다 연속 방문(스트릭)을 갱신
+	updateStreak(){
+		const today = this.todayKey();
+		const last = PlayerData.streak.lastVisit;
+
+		if (last === today) return; // 오늘 이미 방문 체크됨
+
+		if (last) {
+			const diffDays = Math.round((new Date(today) - new Date(last)) / 86400000);
+			PlayerData.streak.count = diffDays === 1 ? PlayerData.streak.count + 1 : 1;
+		} else {
+			PlayerData.streak.count = 1;
+		}
+
+		PlayerData.streak.lastVisit = today;
+		PlayerData.streak.best = Math.max(PlayerData.streak.best, PlayerData.streak.count);
 	}
-	
+
 };
 
 window.PlayerData = {
@@ -92,6 +116,14 @@ window.PlayerData = {
 
     favoriteCards: [],
     memoryNotes: {},
+
+    unlockedAchievements: [],
+
+    streak: {
+        count: 0,
+        best: 0,
+        lastVisit: null
+    },
 
     draw: {
         baseCooldown: 3,

@@ -60,6 +60,7 @@ window.DrawManager = {
         PlayerData.totalDraws += count;
 		PlayerData.draw.lastDrawTime = Date.now();
 		SaveManager.save();
+		AchievementManager.checkAll();
 		
         return displayResult;
 

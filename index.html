@@ -36,10 +36,25 @@
 <div id="main" style="display:none">
 	<div id="album" class="album-container">
 		<div class="album-header"> ISEO'S PHOTO ALBUM </div>
-		<button id="history-open" class="history-open" type="button">⌁ 우리의 시간선</button>
+		<p id="daily-quote" class="daily-quote"></p>
+		<div class="album-actions-row">
+			<button id="history-open" class="history-open" type="button">⌁ 우리의 시간선</button>
+			<button id="stats-open" class="history-open" type="button">📊 우리의 기록</button>
+		</div>
 		<div id="player-status" class="player-status"></div>
 		<div id="chapter-tabs" class="chapter-tabs"></div>
 		<div id="album-progress" class="album-progress"></div>
+		<!--
+		<div id="album-toolbar" class="album-toolbar">
+			<input id="album-search" type="search" inputmode="search" placeholder="🔍 앨범에서 검색" autocomplete="off">
+			<div class="album-sort-row">
+				<button class="album-sort-chip active" data-sort="order" type="button">기본순</button>
+				<button class="album-sort-chip" data-sort="rarity" type="button">희귀도순</button>
+				<button class="album-sort-chip" data-sort="latest" type="button">최신순</button>
+				<button class="album-sort-chip" data-sort="favorite" type="button">즐겨찾기순</button>
+			</div>
+		</div>
+		-->
 		<div id="card-list" class="card-list"></div>
 	</div>
 	<div id="log"></div>
@@ -92,6 +107,24 @@
 	<button id="history-scrolltop" class="history-scrolltop hidden" type="button" aria-label="맨 위로 이동">↑</button>
 </div>
 
+<div id="stats-modal" class="history-modal hidden">
+	<div class="history-modal-bg"></div>
+	<div class="history-content stats-content">
+		<div class="history-sticky-bar">
+			<div class="history-heading">
+				<div><p>ISEO MEMORY ARCHIVE</p><h2>우리의 기록</h2></div>
+				<button id="stats-close" type="button" aria-label="기록 닫기">×</button>
+			</div>
+			<div class="stats-tabs">
+				<button class="stats-tab active" data-tab="summary" type="button">기록</button>
+				<button class="stats-tab" data-tab="achievements" type="button">도전과제 <span id="achievement-count-badge" class="stats-tab-badge"></span></button>
+			</div>
+		</div>
+		<div id="stats-panel-summary" class="stats-panel"></div>
+		<div id="stats-panel-achievements" class="stats-panel achievement-grid hidden"></div>
+	</div>
+</div>
+
 <div id="draw-modal" class="draw-modal hidden">
     <div class="draw-modal-bg"></div>
     <div class="draw-modal-content">
@@ -117,6 +150,7 @@
         <div id="detail-date"></div>
         <div id="detail-desc"></div>
 		<button id="favorite-button" class="favorite-button" type="button">☆ 좋아하는 사진</button>
+		<!--<button id="detail-download" class="detail-download" type="button">⬇ 이미지로 저장</button>-->
 		<label class="memory-note-label" for="detail-note">이 사진에 남기는 한 줄</label>
 		<textarea id="detail-note" maxlength="180" placeholder="오늘 이 사진을 보며 떠오른 마음을 적어 보세요."></textarea>
 		<button id="note-save" class="note-save" type="button">메모 저장하기</button>
@@ -129,12 +163,12 @@
 <script src="js/SaveManager.js"></script>
 <script src="js/CardManager.js"></script>
 <script src="js/DrawManager.js"></script>
+<script src="js/Achievements.js"></script>
 <script src="js/Game.js"></script>
 <script src="js/CardUI.js"></script>
 <script src="js/UI.js"></script>
+<script src="js/StatsUI.js"></script>
 <script src="js/DrawDirector.js"></script>
-<script src="js/Boot.js"></script>
-<script src="js/album.js"></script>
 <script src="js/main.js"></script>
 
 </body>

@@ -8,6 +8,8 @@ html{
 body{
 	
 	display:flex;
+    	justify-content: center;   /* 가로 가운데 */
+	align-items: center;       /* 세로 가운데 */
 	background:#1b7ba7;
 	color:#eee;
 	font-family:Arial,sans-serif;
@@ -1646,7 +1648,7 @@ button, a, input, textarea{
 
 .player-status {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
     gap: 8px;
     margin: 0 auto 16px;
     max-width: 620px;
@@ -1696,6 +1698,73 @@ button, a, input, textarea{
 .chapter-tab.active { border-color: #fff5db; background: #fff5db; color: #42728a; font-weight: bold; }
 .chapter-tab:disabled { opacity: .52; cursor: not-allowed; }
 .empty-album { grid-column: 1 / -1; margin: 34px 0; color: #d8edf5; text-align: center; line-height: 1.7; }
+
+/* ── 앨범 상단: 문구 배너 · 버튼 행 · 검색/정렬 툴바 ───────────────────── */
+.daily-quote { margin: -18px 0 16px; color: #d3edf4; font-size: 12px; text-align: center; opacity: .85; }
+
+.album-actions-row { display: flex; justify-content: center; gap: 8px; margin: 18px 0 16px; }
+.album-actions-row .history-open { margin: 0; }
+
+.album-toolbar { display: flex; flex-direction: column; gap: 8px; max-width: 620px; margin: 0 auto 16px; }
+.album-toolbar input { box-sizing: border-box; width: 100%; padding: 10px 14px; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; background: rgba(255,255,255,.13); color: #fff; font: inherit; font-size: 13px; }
+.album-toolbar input::placeholder { color: #cfe9f5; }
+.album-toolbar input:focus { outline: 2px solid rgba(255,255,255,.55); outline-offset: 1px; }
+.album-sort-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.album-sort-chip { flex: 0 0 auto; min-height: 32px; padding: 6px 13px; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; background: rgba(255,255,255,.12); color: #eaf7fb; font: inherit; font-size: 12px; cursor: pointer; }
+.album-sort-chip.active { border-color: #fff5db; background: #fff5db; color: #42728a; font-weight: bold; }
+
+/* ── 통계/도전과제 모달 ────────────────────────────────────────────── */
+.stats-content { display: flex; flex-direction: column; }
+.stats-tabs { display: flex; gap: 8px; margin-top: 14px; }
+.stats-tab { flex: 1; min-height: 38px; border: 1px solid #ead8ca; border-radius: 12px; background: #fff; color: #8c6b5b; font: inherit; font-size: 13px; cursor: pointer; }
+.stats-tab.active { border-color: #c17058; background: #c17058; color: #fff; }
+.stats-tab-badge { opacity: .85; font-size: 11px; }
+.stats-panel { margin-top: 16px; }
+
+.dday-card { display: flex; flex-direction: column; align-items: center; padding: 22px 16px; border-radius: 16px; background: linear-gradient(160deg, #fff1e6, #fce4d6); text-align: center; }
+.dday-card span { color: #a4604b; font-size: 12px; }
+.dday-card strong { margin: 6px 0 4px; color: #7a4632; font: 400 40px Georgia, serif; }
+.dday-card em { color: #b6947f; font-size: 11px; font-style: normal; }
+
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+.stats-grid div { padding: 10px 6px; border: 1px solid #ead8ca; border-radius: 12px; background: #fff; text-align: center; }
+.stats-grid span { display: block; color: #a4604b; font-size: 10px; }
+.stats-grid strong { display: block; margin-top: 4px; color: #55463d; font-size: 14px; }
+
+.stats-section-title { margin: 22px 0 10px; color: #8c6b5b; font-size: 12px; letter-spacing: .06em; }
+
+.rarity-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.rarity-row-label { flex: 0 0 66px; color: #796358; font-size: 11px; font-weight: bold; }
+.rarity-row-bar { flex: 1; height: 8px; border-radius: 999px; background: #f1e5dc; overflow: hidden; }
+.rarity-row-fill { height: 100%; border-radius: 999px; background: #c17058; }
+.rarity-fill-normal { background: #b7b7b7; }
+.rarity-fill-rare { background: #3aa0ff; }
+.rarity-fill-epic { background: #a64cff; }
+.rarity-fill-legend { background: #ffb92e; }
+.rarity-fill-secret { background: linear-gradient(90deg, #ff4ec7, #5d7dff, #5dffce, #ffe25f); }
+.chapter-fill { background: #cf8f79; }
+.rarity-row-count { flex: 0 0 auto; color: #a4604b; font-size: 11px; }
+
+.stats-recent-card { display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; margin-top: 4px; padding: 10px; border: 0; border-radius: 12px; background: #f6eee7; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.stats-recent-card img { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; }
+.stats-recent-card strong { display: block; color: #5f4b40; font-size: 13px; }
+.stats-recent-card time { display: block; margin-top: 2px; color: #987c6d; font-size: 11px; }
+
+.achievement-grid { display: grid; gap: 10px; }
+.achievement-card { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid #ead8ca; border-radius: 14px; background: #fff; }
+.achievement-card.unlocked { border-color: #f0c9a8; background: #fff8f2; }
+.achievement-card.locked { opacity: .55; }
+.achievement-icon { flex: 0 0 auto; font-size: 24px; }
+.achievement-body strong { display: block; color: #55463d; font-size: 13px; }
+.achievement-body p { margin: 3px 0 0; color: #8c6b5b; font-size: 12px; }
+
+.achievement-toast { position: fixed; top: max(20px, env(safe-area-inset-top)); left: 50%; z-index: 10050; display: flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 14px; background: #2f2620; color: #fff8f0; box-shadow: 0 14px 34px rgba(0,0,0,.35); opacity: 0; transform: translate(-50%, -16px); transition: opacity .3s ease, transform .3s ease; pointer-events: none; }
+.achievement-toast.show { opacity: 1; transform: translate(-50%, 0); }
+.achievement-toast-icon { font-size: 22px; }
+.achievement-toast-body strong { display: block; color: #f0c9a8; font-size: 10px; letter-spacing: .1em; }
+
+.detail-download { width: 100%; min-height: 42px; margin-top: 10px; border: 1px solid #ead8ca; border-radius: 12px; background: #fff; color: #8c6b5b; font: inherit; font-size: 13px; cursor: pointer; }
+.detail-download:disabled { opacity: .6; cursor: wait; }
 
 /* Photo-album prologue and responsive layout */
 #boot {
@@ -1806,6 +1875,14 @@ button, a, input, textarea{
     .card-back{
         letter-spacing:1px; font-size:clamp(6px, 5vw, 15px);
     }
+
+    .daily-quote { margin: -12px 0 12px; font-size: 11px; }
+    .album-actions-row { flex-wrap: wrap; margin: 12px 0 12px; }
+    .album-toolbar input { font-size: 16px; } /* 16px avoids iOS auto-zoom on focus */
+    .stats-tab { font-size: 12px; }
+    .dday-card strong { font-size: 32px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .achievement-toast { width: min(320px, calc(100% - 40px)); }
 }
 
 @media (max-width: 380px) {
