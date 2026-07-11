@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><link rel="stylesheet" href="css/style.css"></head>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover"><link rel="stylesheet" href="css/style.css"></head>
 <body>
 <div id="boot">
 	<div class="album-cover" aria-hidden="true">
@@ -48,14 +48,30 @@
 <div id="history-modal" class="history-modal hidden">
 	<div class="history-modal-bg"></div>
 	<div class="history-content">
-		<div class="history-heading">
-			<div><p>ISEO MEMORY ARCHIVE</p><h2>우리의 시간선</h2></div>
-			<button id="history-close" type="button" aria-label="히스토리 닫기">×</button>
+		<div class="history-drag-handle" aria-hidden="true"></div>
+		<div class="history-sticky-bar">
+			<div class="history-heading">
+				<div><p>ISEO MEMORY ARCHIVE</p><h2>우리의 시간선</h2></div>
+				<button id="history-close" type="button" aria-label="히스토리 닫기">×</button>
+			</div>
+			<div id="history-summary" class="history-summary"></div>
+			<div class="history-toolbar">
+				<div class="history-search">
+					<input id="history-search" type="search" inputmode="search" placeholder="🔍 제목이나 내용으로 검색" autocomplete="off">
+				</div>
+				<div id="history-chapter-filter" class="history-chip-row"></div>
+				<div class="history-actions-row">
+					<button id="history-favorite-toggle" class="history-chip" type="button">★ 좋아하는 사진만</button>
+					<button id="history-sort-toggle" class="history-chip" type="button">최신순</button>
+				</div>
+				<button id="history-filter-reset" class="history-filter-reset hidden" type="button">필터 초기화 ×</button>
+			</div>
 		</div>
-		<div id="history-summary" class="history-summary"></div>
 		<button id="history-random" class="history-random" type="button">랜덤 추억 다시 보기</button>
+		<p id="history-count" class="history-count hidden"></p>
 		<div id="history-list" class="history-list"></div>
 	</div>
+	<button id="history-scrolltop" class="history-scrolltop hidden" type="button" aria-label="맨 위로 이동">↑</button>
 </div>
 
 <div id="draw-modal" class="draw-modal hidden">

@@ -102,51 +102,229 @@ window.UI = {
 };
 
 window.HistoryUI = {
+
+	filters: {
+		search: "",
+		chapterId: "all",
+		favoriteOnly: false,
+		sortDesc: true // true = 최신순 (기본값)
+	},
+
 	init(){
 		document.getElementById("history-open").onclick = () => this.open();
 		document.getElementById("history-close").onclick = () => this.close();
 		document.querySelector(".history-modal-bg").onclick = () => this.close();
 		document.getElementById("history-random").onclick = () => this.openRandomCard();
+
+		const search = document.getElementById("history-search");
+		let searchDebounce;
+		search.addEventListener("input", () => {
+			clearTimeout(searchDebounce);
+			searchDebounce = setTimeout(() => {
+				this.filters.search = search.value.trim();
+				this.renderList();
+			}, 120);
+		});
+
+		const favoriteToggle = document.getElementById("history-favorite-toggle");
+		favoriteToggle.onclick = () => {
+			this.filters.favoriteOnly = !this.filters.favoriteOnly;
+			favoriteToggle.classList.toggle("active", this.filters.favoriteOnly);
+			this.renderList();
+		};
+
+		const sortToggle = document.getElementById("history-sort-toggle");
+		sortToggle.onclick = () => {
+			this.filters.sortDesc = !this.filters.sortDesc;
+			sortToggle.textContent = this.filters.sortDesc ? "최신순" : "오래된순";
+			this.renderList();
+		};
+
+		document.getElementById("history-filter-reset").onclick = () => {
+			this.filters.search = "";
+			this.filters.chapterId = "all";
+			this.filters.favoriteOnly = false;
+			this.filters.sortDesc = true;
+			search.value = "";
+			sortToggle.textContent = "최신순";
+			favoriteToggle.classList.remove("active");
+			this.render();
+		};
+
+		const content = document.querySelector(".history-content");
+		const topButton = document.getElementById("history-scrolltop");
+		content.addEventListener("scroll", () => {
+			topButton.classList.toggle("visible", content.scrollTop > 360);
+		});
+		topButton.onclick = () => content.scrollTo({ top: 0, behavior: "smooth" });
 	},
 
 	open(){
 		this.render();
 		document.getElementById("history-modal").classList.remove("hidden");
+		document.querySelector(".history-content").scrollTop = 0;
 	},
 
 	close(){
 		document.getElementById("history-modal").classList.add("hidden");
 	},
 
+	getOwnedEntries(){
+		return PlayerData.ownedCards
+			.map(owned => ({ card: CardManager.getCard(owned.id), owned }))
+			.filter(item => item.card);
+	},
+
 	render(){
-		const list = document.getElementById("history-list");
+		this.renderSummary();
+		this.renderChapterChips();
+		this.renderList();
+	},
+
+	renderSummary(){
 		const summary = document.getElementById("history-summary");
-		const cards = PlayerData.ownedCards
-			.map(owned => ({ card:CardManager.getCard(owned.id), owned }))
-			.filter(item => item.card)
-			.sort((a, b) => a.card.date.localeCompare(b.card.date) || a.card.order - b.card.order);
-		summary.innerHTML = cards.length
-			? `<span>${cards[0].card.date}부터</span><strong>${cards.length}장의 기억을 시간순으로 모았어요</strong>`
-			: `<span>아직 사진이 없어요</span><strong>첫 기억이 이곳에서 시작돼요</strong>`;
-		list.innerHTML = "";
+		const cards = this.getOwnedEntries();
+		const favoriteCount = PlayerData.favoriteCards.length;
 		if (!cards.length) {
-			list.innerHTML = '<p class="history-empty">발견한 사진이 생기면, 그날의 시간선이 이곳에 이어져요.</p>';
+			summary.innerHTML = `<span>아직 사진이 없어요</span><strong>첫 기억이 이곳에서 시작돼요</strong>`;
+			return;
+		}
+		const earliest = [...cards].sort((a, b) => a.card.date.localeCompare(b.card.date))[0];
+		const favoriteText = favoriteCount > 0 ? ` · ★ ${favoriteCount}장` : "";
+		summary.innerHTML = `<span>${earliest.card.date}부터</span><strong>${cards.length}장의 기억을 모았어요${favoriteText}</strong>`;
+	},
+
+	renderChapterChips(){
+		const container = document.getElementById("history-chapter-filter");
+		const owned = this.getOwnedEntries();
+		const ownedChapterIds = [...new Set(owned.map(item => item.card.chapterId))];
+		const chapters = GameData.chapters.filter(chapter => ownedChapterIds.includes(chapter.id));
+
+		if (chapters.length <= 1) {
+			container.innerHTML = "";
+			this.filters.chapterId = "all";
 			return;
 		}
 
-		cards.forEach(({ card, owned }) => {
+		if (this.filters.chapterId !== "all" && !ownedChapterIds.includes(this.filters.chapterId)) {
+			this.filters.chapterId = "all";
+		}
+
+		const chips = [{ id: "all", title: "전체" }, ...chapters];
+		container.innerHTML = chips.map(chapter => `
+			<button class="history-chip chapter-chip ${this.filters.chapterId === chapter.id ? "active" : ""}" data-chapter-id="${chapter.id}" type="button">${chapter.title}</button>
+		`).join("");
+
+		container.querySelectorAll(".chapter-chip").forEach(button => {
+			button.onclick = () => {
+				this.filters.chapterId = button.dataset.chapterId;
+				container.querySelectorAll(".chapter-chip").forEach(b => b.classList.toggle("active", b === button));
+				this.renderList();
+			};
+		});
+	},
+
+	hasActiveFilters(){
+		return !!this.filters.search || this.filters.chapterId !== "all" || this.filters.favoriteOnly || !this.filters.sortDesc;
+	},
+
+	updateFilterResetVisibility(){
+		document.getElementById("history-filter-reset").classList.toggle("hidden", !this.hasActiveFilters());
+	},
+
+	renderList(){
+		const list = document.getElementById("history-list");
+		const countLabel = document.getElementById("history-count");
+		let entries = this.getOwnedEntries();
+		const totalOwned = entries.length;
+
+		if (this.filters.chapterId !== "all") {
+			entries = entries.filter(item => item.card.chapterId === this.filters.chapterId);
+		}
+		if (this.filters.favoriteOnly) {
+			entries = entries.filter(item => PlayerData.favoriteCards.includes(item.card.id));
+		}
+		if (this.filters.search) {
+			const query = this.filters.search.toLowerCase();
+			entries = entries.filter(item =>
+				item.card.title.toLowerCase().includes(query) ||
+				item.card.description.toLowerCase().includes(query)
+			);
+		}
+
+		this.updateFilterResetVisibility();
+		if (this.hasActiveFilters() && totalOwned > 0) {
+			countLabel.textContent = `${entries.length}장 표시 중 (전체 ${totalOwned}장)`;
+			countLabel.classList.remove("hidden");
+		} else {
+			countLabel.classList.add("hidden");
+		}
+
+		entries.sort((a, b) => {
+			const cmp = a.card.date.localeCompare(b.card.date) || a.card.order - b.card.order;
+			return this.filters.sortDesc ? -cmp : cmp;
+		});
+
+		list.innerHTML = "";
+
+		if (!entries.length) {
+			list.innerHTML = totalOwned
+				? '<p class="history-empty">조건에 맞는 사진이 없어요.<br>검색어나 필터를 바꿔 보세요.</p>'
+				: '<p class="history-empty">발견한 사진이 생기면, 그날의 시간선이 이곳에 이어져요.</p>';
+			return;
+		}
+
+		let lastMonth = null;
+		entries.forEach(({ card, owned }) => {
+			const month = card.date.slice(0, 7);
+			if (month !== lastMonth) {
+				lastMonth = month;
+				const [year, mon] = month.split("-");
+				const header = document.createElement("div");
+				header.className = "history-month";
+				header.textContent = `${year}년 ${parseInt(mon, 10)}월`;
+				list.appendChild(header);
+			}
+
+			const isFavorite = PlayerData.favoriteCards.includes(card.id);
+			const hasNote = !!PlayerData.memoryNotes[card.id];
 			const item = document.createElement("article");
 			item.className = "history-entry";
 			item.innerHTML = `
-				<time>${card.date}</time>
-				<button class="history-card" data-card-id="${card.id}" type="button">${card.title}${owned.count > 1 ? ` ×${owned.count}` : ""}</button>
-				<p>${card.description}</p>
+				<div class="history-card" data-card-id="${card.id}" type="button">
+					<span class="history-thumb-wrap">
+						<img class="history-thumb" src="./assets/images/${card.photo}" alt="" loading="lazy">
+						<button class="history-fav-toggle${isFavorite ? " active" : ""}" type="button" aria-label="좋아하는 사진으로 표시">${isFavorite ? "★" : "☆"}</button>
+					</span>
+					<span class="history-card-body">
+						<time>${card.date}</time>
+						<strong>${card.title}${owned.count > 1 ? ` ×${owned.count}` : ""}${hasNote ? '<span class="history-note-flag">📝</span>' : ""}</strong>
+						<p>${card.description}</p>
+					</span>
+				</div>
 			`;
 			const button = item.querySelector(".history-card");
 			button.onclick = () => {
-				this.close();
-				UI.showCardDetail({ id:card.id, count:owned.count });
+				UI.showCardDetail({ id: card.id, count: owned.count });
 			};
+
+			const favToggle = item.querySelector(".history-fav-toggle");
+			favToggle.onclick = (event) => {
+				event.stopPropagation();
+				const index = PlayerData.favoriteCards.indexOf(card.id);
+				if (index === -1) PlayerData.favoriteCards.push(card.id);
+				else PlayerData.favoriteCards.splice(index, 1);
+				SaveManager.save();
+				this.renderSummary();
+				if (this.filters.favoriteOnly) this.renderList();
+				else {
+					const nowFavorite = PlayerData.favoriteCards.includes(card.id);
+					favToggle.classList.toggle("active", nowFavorite);
+					favToggle.textContent = nowFavorite ? "★" : "☆";
+				}
+				CardUI.renderCards(CardUI.activeChapterId);
+			};
+
 			list.appendChild(item);
 		});
 	},
@@ -157,7 +335,7 @@ window.HistoryUI = {
 		const picked = cards[Math.floor(Math.random() * cards.length)];
 		this.close();
 		const owned = CardManager.getOwnedCard(picked.id);
-		if (owned) UI.showCardDetail({ id:picked.id, count:owned.count });
+		if (owned) UI.showCardDetail({ id: picked.id, count: owned.count });
 	}
 };
 
@@ -269,13 +447,13 @@ window.DrawUI = {
 				: "오늘의 사진 ";
 
 		if(this.page == this.pages.length-1){
-			btn.classList.add("complete");
 			btn.textContent = "확인";
 		}else{
 			btn.textContent = `다음 ${this.page+1}/${this.pages.length}`;
 		}
 
 		modal.classList.remove("hidden");
+		btn.classList.remove("complete");
 		modal.style.display = "flex";
 		grid.innerHTML = "";
 		btn.disabled = true;
@@ -295,7 +473,8 @@ window.DrawUI = {
 			await this.wait( index === 0 ? 500 : 180);
 			await DrawDirector.play(element, card, data);
 		}
-		
+
+		btn.classList.add("complete");
 		btn.disabled = false;
 	},
 	
