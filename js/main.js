@@ -1,4 +1,4 @@
-window.onload = function () {
+window.onload = async function () {
 
     const boot = document.getElementById("boot");
     const main = document.getElementById("main");
@@ -8,6 +8,10 @@ window.onload = function () {
 	SaveManager.load();
 	const isFirstPlay = PlayerData.ownedCards.length === 0;
     if(!isFirstPlay){
+		await wait(250);
+		boot.classList.add("album-opening");
+		await wait(650);
+		
         boot.style.display = "none";
         main.style.display = "block";
         DrawUI.init();
