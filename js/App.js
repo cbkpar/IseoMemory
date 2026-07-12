@@ -1,5 +1,5 @@
 window.App = {
-    version: "0.1.7",
+    version: "0.1.8",
 
     currentMemory: null,
 

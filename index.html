@@ -37,14 +37,27 @@
 	<div id="album" class="album-container">
 		<div class="album-header"> ISEO'S PHOTO ALBUM </div>
 		<p id="daily-quote" class="daily-quote"></p>
+
+		<button id="memory-tree" class="memory-tree" type="button">
+			<div id="memory-tree-visual" class="memory-tree-visual"></div>
+			<p id="memory-tree-caption" class="memory-tree-caption"></p>
+		</button>
+
 		<div class="album-actions-row">
-			<button id="history-open" class="history-open" type="button">⌁ 우리의 시간선</button>
-			<button id="stats-open" class="history-open" type="button">📊 우리의 기록</button>
+			<button id="history-open" class="history-open" type="button">⌁ 시간선</button>
+			<button id="stats-open" class="history-open" type="button">📊 기록</button>
+			<button id="fragment-open" class="history-open" type="button">🧩 조각함</button>
 		</div>
+		<button id="memory-chest" class="memory-chest" type="button">
+			<span id="memory-chest-icon" class="memory-chest-icon">🎁</span>
+			<span class="memory-chest-info">
+				<span id="memory-chest-label" class="memory-chest-label">기억 상자 채우는 중</span>
+				<span class="memory-chest-bar"><span id="memory-chest-fill" class="memory-chest-fill"></span></span>
+			</span>
+		</button>
 		<div id="player-status" class="player-status"></div>
 		<div id="chapter-tabs" class="chapter-tabs"></div>
 		<div id="album-progress" class="album-progress"></div>
-		<!--
 		<div id="album-toolbar" class="album-toolbar">
 			<input id="album-search" type="search" inputmode="search" placeholder="🔍 앨범에서 검색" autocomplete="off">
 			<div class="album-sort-row">
@@ -54,26 +67,28 @@
 				<button class="album-sort-chip" data-sort="favorite" type="button">즐겨찾기순</button>
 			</div>
 		</div>
-		-->
 		<div id="card-list" class="card-list"></div>
 	</div>
 	<div id="log"></div>
 	<div id="progress-bar"></div>
 	<div id="systemLog"></div>
 	<div id="terminal"></div>
-	
-	
+
+
 	<div id="draw-area">
-		<button id="draw-button">
-			<div id="draw-count"> 💗 ×1	</div>
-			<div class="draw-progress">
-				<div id="draw-progress-fill"></div>
-			</div>
+		<div class="camera-stage">
+			<button id="draw-button" class="camera-shutter">
+				<span class="shutter-flash" aria-hidden="true"></span>
+				<span class="shutter-ring" aria-hidden="true"></span>
+				<div id="draw-count"> 💗 ×1	</div>
+			</button>
 			<div id="draw-timer">
 				READY
 			</div>
-
-		</button>
+		</div>
+		<div class="draw-progress">
+			<div id="draw-progress-fill"></div>
+		</div>
 		<div id="draw-result"></div>
 	</div>
 </div>
@@ -117,11 +132,35 @@
 			</div>
 			<div class="stats-tabs">
 				<button class="stats-tab active" data-tab="summary" type="button">기록</button>
+				<button class="stats-tab" data-tab="missions" type="button">미션 <span id="mission-count-badge" class="stats-tab-badge"></span></button>
 				<button class="stats-tab" data-tab="achievements" type="button">도전과제 <span id="achievement-count-badge" class="stats-tab-badge"></span></button>
 			</div>
 		</div>
 		<div id="stats-panel-summary" class="stats-panel"></div>
-		<div id="stats-panel-achievements" class="stats-panel achievement-grid hidden"></div>
+		<div id="stats-panel-missions" class="stats-panel hidden"></div>
+		<div id="stats-panel-achievements" class="stats-panel hidden"></div>
+	</div>
+</div>
+
+<div id="fragment-modal" class="history-modal hidden">
+	<div class="history-modal-bg"></div>
+	<div class="history-content">
+		<div class="history-sticky-bar">
+			<div class="history-heading">
+				<div><p>ISEO MEMORY ARCHIVE</p><h2>기억 조각함</h2></div>
+				<button id="fragment-close" type="button" aria-label="조각함 닫기">×</button>
+			</div>
+			<div id="fragment-balance" class="fragment-balance">🧩 0개</div>
+			<div class="stats-tabs fragment-tabs">
+				<button class="stats-tab fragment-tab active" data-tab="unlock" type="button">새 사진 해금</button>
+				<button class="stats-tab fragment-tab" data-tab="boost" type="button">사진 키우기</button>
+				<button class="stats-tab fragment-tab" data-tab="skip" type="button">탐색 단축</button>
+			</div>
+		</div>
+		<p id="fragment-panel-intro" class="fragment-intro"></p>
+		<div id="fragment-panel-unlock" class="fragment-panel"></div>
+		<div id="fragment-panel-boost" class="fragment-panel hidden"></div>
+		<div id="fragment-panel-skip" class="fragment-panel hidden"></div>
 	</div>
 </div>
 
@@ -141,19 +180,34 @@
 <div id="detail-modal" class="detail-modal hidden">
     <div class="detail-modal-bg"></div>
     <div class="detail-content">
-        <img id="detail-image">
+		<button id="detail-close" class="detail-close" type="button" aria-label="닫기">×</button>
+		<div class="detail-photo-wrap">
+			<img id="detail-image">
+			<div id="detail-develop-badge" class="detail-develop-badge"></div>
+		</div>
         <div id="detail-title"></div>
-        <div id="detail-stars"></div>
-		<div id="detail-level"></div>
-        <div id="detail-count"></div>
-        <div id="detail-effect"></div>
         <div id="detail-date"></div>
+
+		<div class="detail-stat-row">
+			<!--<div id="detail-stars" class="detail-stat"></div>-->
+			<div id="detail-level" class="detail-stat"></div>
+			<div id="detail-effect" class="detail-stat"></div>
+		</div>
         <div id="detail-desc"></div>
-		<button id="favorite-button" class="favorite-button" type="button">☆ 좋아하는 사진</button>
-		<!--<button id="detail-download" class="detail-download" type="button">⬇ 이미지로 저장</button>-->
-		<label class="memory-note-label" for="detail-note">이 사진에 남기는 한 줄</label>
-		<textarea id="detail-note" maxlength="180" placeholder="오늘 이 사진을 보며 떠오른 마음을 적어 보세요."></textarea>
-		<button id="note-save" class="note-save" type="button">메모 저장하기</button>
+
+		<div class="detail-action-row">
+			<button id="favorite-button" class="favorite-button" type="button">☆ 좋아하는 사진</button>
+			<!-- 저장 버튼이 정상 동작하지 않아 임시로 비활성화했습니다
+			<button id="detail-download" class="detail-download" type="button">⬇ 저장</button>
+			-->
+		</div>
+
+		<button id="detail-note-toggle" class="detail-note-toggle" type="button">+ 메모 남기기</button>
+		<div id="detail-note-panel" class="detail-note-panel hidden">
+			<label class="memory-note-label" for="detail-note">이 사진에 남기는 한 줄</label>
+			<textarea id="detail-note" maxlength="180" placeholder="오늘 이 사진을 보며 떠오른 마음을 적어 보세요."></textarea>
+			<button id="note-save" class="note-save" type="button">메모 저장하기</button>
+		</div>
     </div>
 </div>
 
@@ -164,10 +218,11 @@
 <script src="js/CardManager.js"></script>
 <script src="js/DrawManager.js"></script>
 <script src="js/Achievements.js"></script>
-<script src="js/Game.js"></script>
+<script src="js/Missions.js"></script>
 <script src="js/CardUI.js"></script>
 <script src="js/UI.js"></script>
 <script src="js/StatsUI.js"></script>
+<script src="js/FragmentUI.js"></script>
 <script src="js/DrawDirector.js"></script>
 <script src="js/main.js"></script>
 

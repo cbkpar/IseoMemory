@@ -49,7 +49,13 @@ window.DrawManager = {
 		Object.entries(result).forEach(([cardId, amount])=>
 			{
 				const isNew = Player.addCard(cardId, amount);
-			    displayResult.push({id:cardId, count:amount, isNew:isNew});
+				const duplicateCount = isNew ? amount - 1 : amount;
+				let fragmentsEarned = 0;
+				if (duplicateCount > 0) {
+					const card = CardManager.getCard(cardId);
+					if (card) fragmentsEarned = Player.grantFragments(card.rarity, duplicateCount);
+				}
+			    displayResult.push({id:cardId, count:amount, isNew:isNew, fragmentsEarned:fragmentsEarned});
 			}
 		);
 		
@@ -59,6 +65,8 @@ window.DrawManager = {
 		PlayerData.lastPointGain = points;
         PlayerData.totalDraws += count;
 		PlayerData.draw.lastDrawTime = Date.now();
+		Player.ensureDailyMissions();
+		PlayerData.dailyMissions.draws += count;
 		SaveManager.save();
 		AchievementManager.checkAll();
 		

@@ -103,6 +103,20 @@ window.CardManager = {
 
 	countTotalByRarity(rarity){
 		return GameData.cards.filter(card => card.rarity === rarity).length;
+	},
+
+	// 아직 갖지 못했지만, 조각으로 해금을 시도해볼 수 있는 사진들
+	getUnlockableCards(){
+		return GameData.cards.filter(card => {
+			if (this.isOwned(card.id)) return false;
+			const chapter = GameData.chapters.find(chapter => chapter.cards.includes(card.id));
+			if (!chapter || !PlayerData.unlockedChapters.includes(chapter.id)) return false;
+			return card.requires.every(req => Player.hasCard(req));
+		});
+	},
+
+	getFragmentCost(rarity){
+		return GameData.fragmentCost[rarity] ?? 30;
 	}
 
 };

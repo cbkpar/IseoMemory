@@ -6,6 +6,9 @@ window.onload = async function () {
     const bootBtn = document.getElementById("bootBtn");
 
 	SaveManager.load();
+	const welcomeBack = Player.claimWelcomeBack();
+	if (welcomeBack) SaveManager.save();
+
 	const isFirstPlay = PlayerData.ownedCards.length === 0;
     if(!isFirstPlay){
 		await wait(250);
@@ -17,6 +20,7 @@ window.onload = async function () {
         DrawUI.init();
 		CardUI.init();
         CardUI.renderCards("CH-000");
+		if (welcomeBack) CardUI.showWelcomeBackToast(welcomeBack);
         return;
     }
 

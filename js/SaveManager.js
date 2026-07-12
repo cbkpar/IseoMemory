@@ -8,17 +8,28 @@ window.SaveManager = {
             player:PlayerData
         };
 		
-        localStorage.setItem(this.key, JSON.stringify(saveData));
+        try {
+            localStorage.setItem(this.key, JSON.stringify(saveData));
+        } catch (err) {
+            console.warn("저장에 실패했어요", err);
+        }
     },
 	
     load() {
         const data = localStorage.getItem(this.key);
         if (!data) return;
-		
-		const saveData = JSON.parse(data);
-		if(!saveData.player) return;
+
+        let saveData;
+        try {
+            saveData = JSON.parse(data);
+        } catch (err) {
+            console.warn("저장 데이터를 읽는 중 문제가 생겨서 처음부터 시작해요", err);
+            return;
+        }
+		if(!saveData || !saveData.player) return;
 		
         Object.assign(PlayerData, saveData.player);
+		if (!Array.isArray(PlayerData.ownedCards)) PlayerData.ownedCards = [];
 		PlayerData.features = { points:false };
 		PlayerData.draw = { baseCooldown:3, lastDrawTime:0, baseCount:1, ...(PlayerData.draw || {}) };
 		PlayerData.draw.baseCooldown = 3;
@@ -29,6 +40,17 @@ window.SaveManager = {
 		PlayerData.favoriteCards ??= [];
 		PlayerData.memoryNotes ??= {};
 		PlayerData.unlockedAchievements ??= [];
+		PlayerData.fragments ??= 0;
+		PlayerData.fragmentUnlocks ??= 0;
+		PlayerData.photoDownloads ??= 0;
+		PlayerData.usedAlbumSearch ??= false;
+		PlayerData.usedAlbumSort ??= false;
+		PlayerData.usedHistoryRandom ??= false;
+		PlayerData.lastSeenAt ??= null;
+		PlayerData.chest ??= { lastCollectedAt:null };
+		PlayerData.chest.lastCollectedAt ??= null;
+		PlayerData.dailyMissions ??= { date:null, draws:0, favorited:false, noted:false, chestOpened:false, claimed:[] };
+		Player.ensureDailyMissions();
 		PlayerData.streak ??= { count:0, best:0, lastVisit:null };
 		PlayerData.streak.count ??= 0;
 		PlayerData.streak.best ??= 0;

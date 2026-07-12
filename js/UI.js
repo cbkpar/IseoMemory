@@ -56,6 +56,7 @@ window.UI = {
 				modal.classList.add("hidden");
 			}
 		};
+		document.getElementById("detail-close").onclick = () => modal.classList.add("hidden");
 		modal.classList.remove("hidden");
 
 		const playerCard = PlayerData.ownedCards.find(c => c.id === data.id);
@@ -63,23 +64,42 @@ window.UI = {
 		const exp = playerCard.resonance ?? 0;
 		const maxExp = level * level * 10;
 
-		document.getElementById("detail-image").src = "./assets/images/" + card.photo;
+		const image = document.getElementById("detail-image");
+		image.src = "./assets/images/" + card.photo;
+		image.style.filter = CardUI.getDevelopFilter(level);
+		const developBadge = document.getElementById("detail-develop-badge");
+		developBadge.textContent = level >= 7 ? "선명하게 현상되었어요" : `현상 중 · Lv ${level}/7`;
+		developBadge.classList.toggle("complete", level >= 7);
+
 		document.getElementById("detail-title").textContent = card.title;
 		document.getElementById("detail-date").textContent = "📅 " + card.date;
 		document.getElementById("detail-desc").textContent = card.description;
-		document.getElementById("detail-stars").textContent = "💗".repeat(Math.min(level,7));
+		//document.getElementById("detail-stars").textContent = "💗".repeat(Math.min(level,7));
 		document.getElementById("detail-level").textContent = `LV ${level} (${exp} / ${maxExp})`;
 		
 		const skillValue = CardManager.getSkillValue(card, playerCard);
 		const skillText = CardManager.SkillText[card.skill] ? CardManager.SkillText[card.skill](skillValue): card.skill;
 		document.getElementById("detail-effect").textContent =`✨ ${skillText}`;
 
+		const noteToggle = document.getElementById("detail-note-toggle");
+		const notePanel = document.getElementById("detail-note-panel");
+		const hasNote = !!PlayerData.memoryNotes[card.id];
+		notePanel.classList.add("hidden");
+		noteToggle.textContent = hasNote ? "📝 메모 보기 / 수정하기" : "+ 메모 남기기";
+		noteToggle.onclick = () => {
+			notePanel.classList.toggle("hidden");
+		};
+
 		const favoriteButton = document.getElementById("favorite-button");
 		const isFavorite = PlayerData.favoriteCards.includes(card.id);
 		favoriteButton.textContent = isFavorite ? "★ 좋아하는 사진에서 빼기" : "☆ 좋아하는 사진으로 담기";
 		favoriteButton.onclick = () => {
 			const index = PlayerData.favoriteCards.indexOf(card.id);
-			if (index === -1) PlayerData.favoriteCards.push(card.id);
+			if (index === -1) {
+				PlayerData.favoriteCards.push(card.id);
+				Player.ensureDailyMissions();
+				PlayerData.dailyMissions.favorited = true;
+			}
 			else PlayerData.favoriteCards.splice(index, 1);
 			SaveManager.save();
 			AchievementManager.checkAll();
@@ -91,13 +111,18 @@ window.UI = {
 		note.value = PlayerData.memoryNotes[card.id] || "";
 		document.getElementById("note-save").onclick = async () => {
 			const text = note.value.trim();
-			if (text) PlayerData.memoryNotes[card.id] = text;
+			if (text) {
+				PlayerData.memoryNotes[card.id] = text;
+				Player.ensureDailyMissions();
+				PlayerData.dailyMissions.noted = true;
+			}
 			else delete PlayerData.memoryNotes[card.id];
 			SaveManager.save();
 			AchievementManager.checkAll();
 			document.getElementById("note-save").textContent = "저장했어요 ✓";
       await new Promise(resolve => setTimeout(resolve, 500));
-      modal.classList.add("hidden");
+      notePanel.classList.add("hidden");
+      noteToggle.textContent = text ? "📝 메모 보기 / 수정하기" : "+ 메모 남기기";
 		};
 
 		const downloadButton = document.getElementById("detail-download");
@@ -166,6 +191,10 @@ window.UI = {
 			link.download = `iseo-memory-${card.id}.png`;
 			link.href = canvas.toDataURL("image/png");
 			link.click();
+
+			PlayerData.photoDownloads += 1;
+			SaveManager.save();
+			AchievementManager.checkAll();
 		} catch (err) {
 			console.error(err);
 			alert("이미지를 만드는 중 문제가 발생했어요.");
@@ -178,7 +207,6 @@ window.UI = {
 	loadImage(src){
 		return new Promise((resolve, reject) => {
 			const img = new Image();
-			img.crossOrigin = "anonymous";
 			img.onload = () => resolve(img);
 			img.onerror = reject;
 			img.src = src;
@@ -398,7 +426,11 @@ window.HistoryUI = {
 			favToggle.onclick = (event) => {
 				event.stopPropagation();
 				const index = PlayerData.favoriteCards.indexOf(card.id);
-				if (index === -1) PlayerData.favoriteCards.push(card.id);
+				if (index === -1) {
+					PlayerData.favoriteCards.push(card.id);
+					Player.ensureDailyMissions();
+					PlayerData.dailyMissions.favorited = true;
+				}
 				else PlayerData.favoriteCards.splice(index, 1);
 				SaveManager.save();
 				AchievementManager.checkAll();
@@ -420,6 +452,10 @@ window.HistoryUI = {
 		const cards = PlayerData.ownedCards;
 		if (!cards.length) return;
 		const picked = cards[Math.floor(Math.random() * cards.length)];
+		if (!PlayerData.usedHistoryRandom) {
+			PlayerData.usedHistoryRandom = true;
+			AchievementManager.checkAll();
+		}
 		this.close();
 		const owned = CardManager.getOwnedCard(picked.id);
 		if (owned) UI.showCardDetail({ id: picked.id, count: owned.count });
@@ -443,6 +479,11 @@ window.DrawUI = {
         //this.pageSize = window.matchMedia("(max-width: 640px)").matches ? 4 : 10;
         const button = document.getElementById("draw-button");
         button.onclick = () => {
+			button.classList.remove("flash");
+			void button.offsetWidth;
+			button.classList.add("flash");
+			if (navigator.vibrate) navigator.vibrate(18);
+
             const result = DrawManager.draw();
 			
 			if(result.length > 0){
@@ -572,9 +613,7 @@ window.DrawUI = {
 		div.innerHTML=`
 			<div class="draw-flip-card rarity-${rarity}">
 				<div class="card-face card-back">
-					<div class="memory-logo">
-						MEMORY
-					</div>
+					<img class="card-back-image" src="./assets/images/card-back.png" draggable="false">
 				</div>
 				<div class="card-face card-front">
 					<div class="draw-rarity-glow"></div>
@@ -586,7 +625,7 @@ window.DrawUI = {
 					</div>
 				</div>
 			</div>
-			<div class="draw-card-count">${data.count > 1 ?`💗 ×${data.count}`:""}</div>
+			<div class="draw-card-count">${data.count > 1 ?`💗 ×${data.count}`:""}${data.fragmentsEarned > 0 ? `<span class="draw-card-fragment">🧩+${data.fragmentsEarned}</span>` : ""}</div>
 		`;
 		const particleLayer = div.querySelector(".draw-particle-layer");
 		createParticles(particleLayer, rarity);
