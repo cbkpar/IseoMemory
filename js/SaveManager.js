@@ -50,6 +50,8 @@ window.SaveManager = {
 		PlayerData.chest ??= { lastCollectedAt:null };
 		PlayerData.chest.lastCollectedAt ??= null;
 		PlayerData.dailyMissions ??= { date:null, draws:0, favorited:false, noted:false, chestOpened:false, claimed:[] };
+		PlayerData.letters ??= [];
+		if (!Array.isArray(PlayerData.letters)) PlayerData.letters = [];
 		Player.ensureDailyMissions();
 		PlayerData.streak ??= { count:0, best:0, lastVisit:null };
 		PlayerData.streak.count ??= 0;

@@ -1914,6 +1914,28 @@ button, a, input, textarea{
 .fragment-skip-button { min-height: 42px; padding: 10px 20px; border: 0; border-radius: 12px; background: #c17058; color: #fff; font: inherit; font-size: 13px; font-weight: bold; cursor: pointer; }
 .fragment-skip-button:disabled { background: #e5d4c8; color: #a89485; cursor: not-allowed; }
 
+/* ── 타임캡슐 ──────────────────────────────────────────────────────── */
+.capsule-next-milestone { display: flex; justify-content: space-between; gap: 12px; margin: 16px 0 0; padding: 12px; border-radius: 12px; background: #f8eee6; color: #8c6b5b; font-size: 13px; }
+.capsule-next-milestone strong { color: #a4604b; font-weight: 600; }
+
+.capsule-form { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.capsule-form input[type="text"],
+.capsule-form input[type="date"],
+.capsule-form select { box-sizing: border-box; width: 100%; padding: 10px 14px; border: 1px solid #ead8ca; border-radius: 12px; background: #fff; color: #55463d; font: inherit; font-size: 13px; }
+.capsule-form textarea { box-sizing: border-box; width: 100%; min-height: 90px; padding: 10px 14px; border: 1px solid #ead8ca; border-radius: 12px; background: #fff; color: #55463d; font: inherit; font-size: 13px; line-height: 1.6; resize: vertical; }
+.capsule-submit { min-height: 42px; border: 0; border-radius: 12px; background: #c17058; color: #fff; font: inherit; font-size: 13px; font-weight: bold; cursor: pointer; }
+
+.capsule-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.capsule-letter { display: flex; align-items: flex-start; gap: 12px; width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #ead8ca; border-radius: 14px; background: #fff; text-align: left; font: inherit; cursor: default; }
+.capsule-letter.locked { opacity: .7; }
+.capsule-letter.ready { border-color: #cf8f79; background: #fff8f2; cursor: pointer; animation: pulse 1.6s infinite; }
+.capsule-letter.opened { background: #faf5ef; }
+.capsule-letter-icon { flex: 0 0 auto; font-size: 20px; }
+.capsule-letter-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.capsule-letter-body strong { color: #55463d; font-size: 13px; }
+.capsule-letter-body span { color: #a4604b; font-size: 11px; }
+.capsule-letter-body p { margin: 2px 0 0; color: #796358; font-size: 13px; line-height: 1.6; white-space: pre-wrap; }
+
 /* ── 통계/도전과제 모달 ────────────────────────────────────────────── */
 .stats-content { display: flex; flex-direction: column; }
 .stats-tabs { display: flex; gap: 8px; margin-top: 14px; }

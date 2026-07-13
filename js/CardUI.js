@@ -21,6 +21,7 @@ window.CardUI = {
 		HistoryUI.init();
 		StatsUI.init();
 		FragmentUI.init();
+		TimeCapsuleUI.init();
         this.renderStatus();
         this.renderChapterTabs();
 		this.renderDailyQuote();

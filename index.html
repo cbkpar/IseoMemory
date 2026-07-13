@@ -47,6 +47,7 @@
 			<button id="history-open" class="history-open" type="button">⌁ 시간선</button>
 			<button id="stats-open" class="history-open" type="button">📊 기록</button>
 			<button id="fragment-open" class="history-open" type="button">🧩 조각함</button>
+			<button id="capsule-open" class="history-open" type="button">📮 타임캡슐</button>
 		</div>
 		<button id="memory-chest" class="memory-chest" type="button">
 			<span id="memory-chest-icon" class="memory-chest-icon">🎁</span>
@@ -164,6 +165,34 @@
 	</div>
 </div>
 
+<div id="capsule-modal" class="history-modal hidden">
+	<div class="history-modal-bg"></div>
+	<div class="history-content">
+		<div class="history-sticky-bar">
+			<div class="history-heading">
+				<div><p>ISEO MEMORY ARCHIVE</p><h2>타임캡슐</h2></div>
+				<button id="capsule-close" type="button" aria-label="타임캡슐 닫기">×</button>
+			</div>
+			<div id="capsule-next-milestone" class="capsule-next-milestone"></div>
+		</div>
+
+		<p class="fragment-intro">미래의 이서에게, 혹은 미래의 우리에게 편지를 남겨보세요.<br>정한 날짜가 되기 전까지는 열어볼 수 없어요.</p>
+
+		<div class="capsule-form">
+			<input id="capsule-title" type="text" maxlength="40" placeholder="편지 제목 (예: 백일을 맞이한 너에게)">
+			<textarea id="capsule-body" maxlength="500" placeholder="하고 싶은 이야기를 자유롭게 적어보세요."></textarea>
+			<select id="capsule-milestone"></select>
+			<div id="capsule-custom-date-row" class="hidden">
+				<input id="capsule-custom-date" type="date">
+			</div>
+			<button id="capsule-submit" class="capsule-submit" type="button">💌 편지 봉인하기</button>
+		</div>
+
+		<h3 class="stats-section-title">남긴 편지들</h3>
+		<div id="capsule-list" class="capsule-list"></div>
+	</div>
+</div>
+
 <div id="draw-modal" class="draw-modal hidden">
     <div class="draw-modal-bg"></div>
     <div class="draw-modal-content">
@@ -223,6 +252,7 @@
 <script src="js/UI.js"></script>
 <script src="js/StatsUI.js"></script>
 <script src="js/FragmentUI.js"></script>
+<script src="js/TimeCapsuleUI.js"></script>
 <script src="js/DrawDirector.js"></script>
 <script src="js/main.js"></script>
 

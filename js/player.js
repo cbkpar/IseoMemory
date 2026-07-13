@@ -184,6 +184,47 @@ window.Player = {
 		return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 	},
 
+	// 미래의 이서(또는 우리)에게 보내는 편지를 남겨요
+	writeLetter(title, body, unlockAt){
+		const letter = {
+			id: "cap_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+			title: title.trim().slice(0, 40) || "이서에게",
+			body: body.trim().slice(0, 500),
+			createdAt: Date.now(),
+			unlockAt,
+			opened: false
+		};
+		PlayerData.letters.push(letter);
+		SaveManager.save();
+		return letter;
+	},
+
+	openLetter(id){
+		const letter = PlayerData.letters.find(l => l.id === id);
+		if (!letter) return false;
+		if (Date.now() < letter.unlockAt) return false;
+		letter.opened = true;
+		SaveManager.save();
+		return true;
+	},
+
+	getNextMilestone(){
+		const birth = new Date(2025, 11, 27).getTime();
+		const milestones = [
+			{ label:"100일", at: birth + 100 * 86400000 },
+			{ label:"첫 돌", at: new Date(2026, 11, 27).getTime() },
+			{ label:"두 번째 생일", at: new Date(2027, 11, 27).getTime() },
+			{ label:"다섯 번째 생일", at: new Date(2030, 11, 27).getTime() },
+			{ label:"초등학교 입학", at: new Date(2032, 2, 2).getTime() },
+			{ label:"열 번째 생일", at: new Date(2035, 11, 27).getTime() },
+			{ label:"성인이 되는 날", at: new Date(2044, 11, 27).getTime() }
+		];
+		const now = Date.now();
+		return milestones.find(m => m.at > now) || milestones[milestones.length - 1];
+	},
+
+
+
 	// 날짜가 바뀌면 오늘의 미션을 새로 시작해요
 	ensureDailyMissions(){
 		const today = this.todayKey();
@@ -240,6 +281,8 @@ window.PlayerData = {
     memoryNotes: {},
 
     unlockedAchievements: [],
+
+    letters: [],
 
     fragments: 0,
     fragmentUnlocks: 0,

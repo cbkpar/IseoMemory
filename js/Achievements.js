@@ -181,7 +181,16 @@ window.Achievements = {
 			condition:() => PlayerData.usedHistoryRandom },
 
 		{ id:"SHARE_MEMORY", cat:"SPECIAL", icon:"📤", title:"추억을 나누다", desc:"사진을 이미지로 저장해봤어요",
-			condition:() => PlayerData.photoDownloads >= 1 }
+			condition:() => PlayerData.photoDownloads >= 1 },
+
+		{ id:"FIRST_LETTER", cat:"SPECIAL", icon:"💌", title:"미래에게 보내는 마음", desc:"타임캡슐에 첫 편지를 남겼어요",
+			condition:() => PlayerData.letters.length >= 1 },
+
+		{ id:"LETTER_5", cat:"SPECIAL", icon:"📮", title:"쌓여가는 편지들", desc:"타임캡슐에 편지 5통을 남겼어요",
+			condition:() => PlayerData.letters.length >= 5 },
+
+		{ id:"OPEN_LETTER", cat:"SPECIAL", icon:"📖", title:"열어본 그날의 마음", desc:"타임캡슐 편지를 처음 열어봤어요",
+			condition:() => PlayerData.letters.some(l => l.opened) }
 	]
 
 };
