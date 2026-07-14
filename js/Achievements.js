@@ -190,7 +190,19 @@ window.Achievements = {
 			condition:() => PlayerData.letters.length >= 5 },
 
 		{ id:"OPEN_LETTER", cat:"SPECIAL", icon:"📖", title:"열어본 그날의 마음", desc:"타임캡슐 편지를 처음 열어봤어요",
-			condition:() => PlayerData.letters.some(l => l.opened) }
+			condition:() => PlayerData.letters.some(l => l.opened) },
+
+		{ id:"GAME_WIN", cat:"SPECIAL", icon:"🎮", title:"기억 맞추기 성공", desc:"기억 맞추기 게임을 처음 완성했어요",
+			condition:() => PlayerData.memoryGame.bestMoves !== null },
+
+		{ id:"GAME_MASTER", cat:"SPECIAL", icon:"🧠", title:"완벽한 기억력", desc:"기억 맞추기를 10번 이내로 완성했어요",
+			condition:() => PlayerData.memoryGame.bestMoves !== null && PlayerData.memoryGame.bestMoves <= 10 },
+
+		{ id:"PUZZLE_WIN", cat:"SPECIAL", icon:"🧩", title:"퍼즐 조각을 맞추다", desc:"직소 퍼즐을 처음 완성했어요",
+			condition:() => Object.values(PlayerData.puzzleGame.bestMoves).some(v => v !== null) },
+
+		{ id:"PUZZLE_HARD", cat:"SPECIAL", icon:"🏔️", title:"어려운 퍼즐 정복", desc:"5×5 난이도 퍼즐을 완성했어요",
+			condition:() => PlayerData.puzzleGame.bestMoves[5] !== null }
 	]
 
 };

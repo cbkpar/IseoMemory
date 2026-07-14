@@ -48,6 +48,7 @@
 			<button id="stats-open" class="history-open" type="button">📊 기록</button>
 			<button id="fragment-open" class="history-open" type="button">🧩 조각함</button>
 			<button id="capsule-open" class="history-open" type="button">📮 타임캡슐</button>
+			<button id="minigame-open" class="history-open" type="button">🎮 미니게임</button>
 		</div>
 		<button id="memory-chest" class="memory-chest" type="button">
 			<span id="memory-chest-icon" class="memory-chest-icon">🎁</span>
@@ -193,6 +194,56 @@
 	</div>
 </div>
 
+<div id="minigame-modal" class="history-modal hidden">
+	<div class="history-modal-bg"></div>
+	<div class="history-content">
+		<div class="history-sticky-bar">
+			<div class="history-heading">
+				<div><p>ISEO MEMORY ARCHIVE</p><h2>미니게임</h2></div>
+				<button id="minigame-close" type="button" aria-label="미니게임 닫기">×</button>
+			</div>
+			<div class="stats-tabs">
+				<button class="stats-tab minigame-tab active" data-tab="match" type="button">🎮 기억 맞추기</button>
+				<button class="stats-tab minigame-tab" data-tab="puzzle" type="button">🧩 직소 퍼즐</button>
+			</div>
+		</div>
+
+		<div id="minigame-panel-match" class="minigame-panel">
+			<div class="game-toolbar">
+				<span id="game-moves" class="game-moves"></span>
+				<button id="game-restart" class="game-restart" type="button">🔄 다시 섞기</button>
+			</div>
+			<p id="game-empty" class="history-empty hidden">사진을 4장 이상 모으면 기억 맞추기를 즐길 수 있어요.</p>
+			<p id="game-result" class="game-result"></p>
+			<div id="game-grid" class="game-grid"></div>
+		</div>
+
+		<div id="minigame-panel-puzzle" class="minigame-panel hidden">
+			<div id="puzzle-controls" class="puzzle-controls">
+				<select id="puzzle-photo" class="puzzle-photo-select"></select>
+				<div class="puzzle-size-row">
+					<button class="puzzle-size-chip" data-size="3" type="button">3×3 쉬움</button>
+					<button class="puzzle-size-chip active" data-size="4" type="button">4×4 보통</button>
+					<button class="puzzle-size-chip" data-size="5" type="button">5×5 어려움</button>
+				</div>
+				<div class="game-toolbar">
+					<span id="puzzle-moves" class="game-moves"></span>
+					<button id="puzzle-restart" class="game-restart" type="button">🔄 다시 섞기</button>
+				</div>
+			</div>
+			<p id="puzzle-empty" class="history-empty hidden">아직 모은 사진이 없어요. 사진을 찾으면 퍼즐을 즐길 수 있어요.</p>
+			<p id="puzzle-result" class="game-result"></p>
+			<div class="puzzle-body">
+				<div id="puzzle-grid" class="puzzle-grid"></div>
+				<div class="puzzle-preview-box">
+					<span>정답 미리보기</span>
+					<div id="puzzle-preview" class="puzzle-preview"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="draw-modal" class="draw-modal hidden">
     <div class="draw-modal-bg"></div>
     <div class="draw-modal-content">
@@ -253,6 +304,9 @@
 <script src="js/StatsUI.js"></script>
 <script src="js/FragmentUI.js"></script>
 <script src="js/TimeCapsuleUI.js"></script>
+<script src="js/MemoryGameUI.js"></script>
+<script src="js/PuzzleUI.js"></script>
+<script src="js/MiniGameUI.js"></script>
 <script src="js/DrawDirector.js"></script>
 <script src="js/main.js"></script>
 

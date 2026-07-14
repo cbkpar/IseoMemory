@@ -52,6 +52,9 @@ window.SaveManager = {
 		PlayerData.dailyMissions ??= { date:null, draws:0, favorited:false, noted:false, chestOpened:false, claimed:[] };
 		PlayerData.letters ??= [];
 		if (!Array.isArray(PlayerData.letters)) PlayerData.letters = [];
+		PlayerData.memoryGame ??= { bestMoves:null, dailyPlays:0, lastPlayDate:null };
+		PlayerData.puzzleGame ??= { bestMoves:{3:null,4:null,5:null}, dailyPlays:0, lastPlayDate:null };
+		PlayerData.puzzleGame.bestMoves ??= { 3:null, 4:null, 5:null };
 		Player.ensureDailyMissions();
 		PlayerData.streak ??= { count:0, best:0, lastVisit:null };
 		PlayerData.streak.count ??= 0;

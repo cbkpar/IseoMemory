@@ -22,6 +22,9 @@ window.CardUI = {
 		StatsUI.init();
 		FragmentUI.init();
 		TimeCapsuleUI.init();
+		MemoryGameUI.init();
+		PuzzleUI.init();
+		MiniGameUI.init();
         this.renderStatus();
         this.renderChapterTabs();
 		this.renderDailyQuote();

@@ -284,6 +284,18 @@ window.PlayerData = {
 
     letters: [],
 
+    memoryGame: {
+        bestMoves: null,
+        dailyPlays: 0,
+        lastPlayDate: null
+    },
+
+    puzzleGame: {
+        bestMoves: { 3:null, 4:null, 5:null },
+        dailyPlays: 0,
+        lastPlayDate: null
+    },
+
     fragments: 0,
     fragmentUnlocks: 0,
 
