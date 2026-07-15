@@ -22,13 +22,16 @@ window.CardUI = {
 		StatsUI.init();
 		FragmentUI.init();
 		TimeCapsuleUI.init();
+		GrowthLogUI.init();
 		MemoryGameUI.init();
 		PuzzleUI.init();
+		WordGameUI.init();
 		MiniGameUI.init();
         this.renderStatus();
         this.renderChapterTabs();
 		this.renderDailyQuote();
 		this.renderMissionDot();
+		this.renderOnThisDay();
 		this.renderMemoryTree();
 		this.initToolbar();
 		this.initChest();
@@ -106,6 +109,38 @@ window.CardUI = {
 		Player.ensureDailyMissions();
 		const claimable = MissionManager.getClaimableCount();
 		button.classList.toggle("has-dot", claimable > 0);
+	},
+
+	getOnThisDayCards(){
+		const today = new Date();
+		const mm = String(today.getMonth() + 1).padStart(2, "0");
+		const dd = String(today.getDate()).padStart(2, "0");
+		const thisYear = today.getFullYear();
+
+		return PlayerData.ownedCards
+			.map(owned => ({ owned, card: CardManager.getCard(owned.id) }))
+			.filter(item => item.card)
+			.filter(item => {
+				const [y, m, d] = item.card.date.split("-");
+				return m === mm && d === dd && Number(y) < thisYear;
+			});
+	},
+
+	renderOnThisDay(){
+		const el = document.getElementById("on-this-day");
+		if (!el) return;
+
+		const matches = this.getOnThisDayCards();
+		if (!matches.length) {
+			el.classList.add("hidden");
+			return;
+		}
+
+		const pick = matches[0];
+		const yearsAgo = new Date().getFullYear() - Number(pick.card.date.split("-")[0]);
+		el.classList.remove("hidden");
+		el.querySelector(".on-this-day-text").textContent = `${yearsAgo}년 전 오늘 · ${pick.card.title}`;
+		el.onclick = () => UI.showCardDetail({ id: pick.card.id, count: pick.owned.count });
 	},
 
 	renderDailyQuote(){
@@ -226,6 +261,7 @@ window.CardUI = {
 		this.renderMemoryTree();
 		this.renderDailyQuote();
 		this.renderMissionDot();
+		this.renderOnThisDay();
 
         if (cards.length === 0) {
             cardList.innerHTML = this.filters.search

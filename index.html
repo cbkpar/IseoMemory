@@ -37,6 +37,9 @@
 	<div id="album" class="album-container">
 		<div class="album-header"> ISEO'S PHOTO ALBUM </div>
 		<p id="daily-quote" class="daily-quote"></p>
+		<button id="on-this-day" class="on-this-day hidden" type="button">
+			<span>📅</span><span class="on-this-day-text"></span>
+		</button>
 
 		<button id="memory-tree" class="memory-tree" type="button">
 			<div id="memory-tree-visual" class="memory-tree-visual"></div>
@@ -48,6 +51,7 @@
 			<button id="stats-open" class="history-open" type="button">📊 기록</button>
 			<button id="fragment-open" class="history-open" type="button">🧩 조각함</button>
 			<button id="capsule-open" class="history-open" type="button">📮 타임캡슐</button>
+			<button id="growth-open" class="history-open" type="button">📏 성장기록</button>
 			<button id="minigame-open" class="history-open" type="button">🎮 미니게임</button>
 		</div>
 		<button id="memory-chest" class="memory-chest" type="button">
@@ -194,6 +198,35 @@
 	</div>
 </div>
 
+<div id="growth-modal" class="history-modal hidden">
+	<div class="history-modal-bg"></div>
+	<div class="history-content">
+		<div class="history-sticky-bar">
+			<div class="history-heading">
+				<div><p>ISEO MEMORY ARCHIVE</p><h2>성장기록</h2></div>
+				<button id="growth-close" type="button" aria-label="성장기록 닫기">×</button>
+			</div>
+		</div>
+
+		<p class="fragment-intro">이서의 키와 몸무게를 편하게 기록해두세요.</p>
+
+		<div id="growth-chart" class="growth-chart"></div>
+
+		<div class="capsule-form">
+			<input id="growth-date" type="date">
+			<div class="growth-input-row">
+				<input id="growth-height" type="number" step="0.1" min="0" placeholder="키 (cm)">
+				<input id="growth-weight" type="number" step="0.01" min="0" placeholder="몸무게 (kg)">
+			</div>
+			<input id="growth-memo" type="text" maxlength="100" placeholder="메모 (선택)">
+			<button id="growth-submit" class="capsule-submit" type="button">📏 기록 남기기</button>
+		</div>
+
+		<h3 class="stats-section-title">기록 목록</h3>
+		<div id="growth-list" class="growth-list"></div>
+	</div>
+</div>
+
 <div id="minigame-modal" class="history-modal hidden">
 	<div class="history-modal-bg"></div>
 	<div class="history-content">
@@ -205,6 +238,7 @@
 			<div class="stats-tabs">
 				<button class="stats-tab minigame-tab active" data-tab="match" type="button">🎮 기억 맞추기</button>
 				<button class="stats-tab minigame-tab" data-tab="puzzle" type="button">🧩 직소 퍼즐</button>
+			<button class="stats-tab minigame-tab" data-tab="word" type="button">🔤 오늘의 단어</button>
 			</div>
 		</div>
 
@@ -240,6 +274,22 @@
 					<div id="puzzle-preview" class="puzzle-preview"></div>
 				</div>
 			</div>
+		</div>
+
+		<div id="minigame-panel-word" class="minigame-panel hidden">
+			<div class="word-top-row">
+				<div class="word-size-row">
+					<button class="word-size-chip active" data-size="5" type="button">5글자</button>
+					<button class="word-size-chip" data-size="6" type="button">6글자</button>
+					<button class="word-size-chip" data-size="7" type="button">7글자</button>
+				</div>
+				<button id="word-restart" class="word-restart-btn" type="button" aria-label="다른 단어로 새로 시작">🔄</button>
+			</div>
+			<p id="word-status" class="word-status"></p>
+			<p id="word-result" class="game-result"></p>
+			<div id="word-grid" class="word-grid"></div>
+			<p id="word-preview" class="word-preview"></p>
+			<div id="word-keyboard" class="word-keyboard"></div>
 		</div>
 	</div>
 </div>
@@ -304,8 +354,10 @@
 <script src="js/StatsUI.js"></script>
 <script src="js/FragmentUI.js"></script>
 <script src="js/TimeCapsuleUI.js"></script>
+<script src="js/GrowthLogUI.js"></script>
 <script src="js/MemoryGameUI.js"></script>
 <script src="js/PuzzleUI.js"></script>
+<script src="js/WordGameUI.js"></script>
 <script src="js/MiniGameUI.js"></script>
 <script src="js/DrawDirector.js"></script>
 <script src="js/main.js"></script>

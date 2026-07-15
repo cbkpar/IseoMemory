@@ -59,13 +59,8 @@ window.MemoryGameUI = {
 			const matched = this.state.matched.has(i);
 			return `
 				<button class="game-tile ${flipped ? "flipped" : ""} ${matched ? "matched" : ""}" data-index="${i}" type="button" aria-label="카드 뒤집기">
-					<span class="game-tile-inner">
-						<span class="card-face card-back">
-							<span class="card-back-pattern" aria-hidden="true"></span>
-							<span class="card-back-mark">MEMORY</span>
-						</span>
-						<span class="card-face card-front"><img src="./assets/images/${tile.photo}" alt=""></span>
-					</span>
+					<span class="game-tile-back-label">MEMORY</span>
+					<img class="game-tile-photo" src="./assets/images/${tile.photo}" alt="">
 				</button>
 			`;
 		}).join("");

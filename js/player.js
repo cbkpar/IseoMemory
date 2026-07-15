@@ -179,6 +179,28 @@ window.Player = {
 		return "새싹 수집가";
 	},
 
+	// 키/몸무게 성장 기록을 남겨요
+	addGrowthLog(date, heightCm, weightKg, memo){
+		const log = {
+			id: "growth_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+			date,
+			heightCm: heightCm ? Number(heightCm) : null,
+			weightKg: weightKg ? Number(weightKg) : null,
+			memo: (memo || "").trim().slice(0, 100)
+		};
+		PlayerData.growthLogs.push(log);
+		SaveManager.save();
+		return log;
+	},
+
+	removeGrowthLog(id){
+		const index = PlayerData.growthLogs.findIndex(l => l.id === id);
+		if (index === -1) return false;
+		PlayerData.growthLogs.splice(index, 1);
+		SaveManager.save();
+		return true;
+	},
+
 	todayKey(){
 		const d = new Date();
 		return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
@@ -281,6 +303,8 @@ window.PlayerData = {
     memoryNotes: {},
 
     unlockedAchievements: [],
+
+    growthLogs: [],
 
     letters: [],
 

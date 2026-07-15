@@ -26,9 +26,11 @@ window.MiniGameUI = {
 		document.querySelectorAll(".minigame-tab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
 		document.getElementById("minigame-panel-match").classList.toggle("hidden", tab !== "match");
 		document.getElementById("minigame-panel-puzzle").classList.toggle("hidden", tab !== "puzzle");
+		document.getElementById("minigame-panel-word").classList.toggle("hidden", tab !== "word");
 
 		if (tab === "match") MemoryGameUI.activate();
-		else PuzzleUI.activate();
+		else if (tab === "puzzle") PuzzleUI.activate();
+		else WordGameUI.activate();
 	}
 
 };

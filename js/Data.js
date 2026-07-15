@@ -1,6 +1,6 @@
 ﻿window.GameData = {
 
-    version:"0.1.8",
+    version:"1.1.0",
 
     fragmentValue:{ NORMAL:1, RARE:2, EPIC:3, LEGEND:5, SECRET:8 },
     fragmentCost:{ NORMAL:400, RARE:900, EPIC:1600, LEGEND:30000, SECRET:60000 },

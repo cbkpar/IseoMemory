@@ -192,6 +192,12 @@ window.Achievements = {
 		{ id:"OPEN_LETTER", cat:"SPECIAL", icon:"📖", title:"열어본 그날의 마음", desc:"타임캡슐 편지를 처음 열어봤어요",
 			condition:() => PlayerData.letters.some(l => l.opened) },
 
+		{ id:"GROWTH_FIRST", cat:"SPECIAL", icon:"📏", title:"첫 성장 기록", desc:"키·몸무게 기록을 처음 남겼어요",
+			condition:() => PlayerData.growthLogs.length >= 1 },
+
+		{ id:"GROWTH_10", cat:"SPECIAL", icon:"📈", title:"자라나는 기록", desc:"성장 기록을 10개 남겼어요",
+			condition:() => PlayerData.growthLogs.length >= 10 },
+
 		{ id:"GAME_WIN", cat:"SPECIAL", icon:"🎮", title:"기억 맞추기 성공", desc:"기억 맞추기 게임을 처음 완성했어요",
 			condition:() => PlayerData.memoryGame.bestMoves !== null },
 
@@ -202,7 +208,10 @@ window.Achievements = {
 			condition:() => Object.values(PlayerData.puzzleGame.bestMoves).some(v => v !== null) },
 
 		{ id:"PUZZLE_HARD", cat:"SPECIAL", icon:"🏔️", title:"어려운 퍼즐 정복", desc:"5×5 난이도 퍼즐을 완성했어요",
-			condition:() => PlayerData.puzzleGame.bestMoves[5] !== null }
+			condition:() => PlayerData.puzzleGame.bestMoves[5] !== null },
+
+		{ id:"ON_THIS_DAY", cat:"SPECIAL", icon:"📅", title:"그날의 우리를 다시", desc:"'1년 전 오늘' 기억을 다시 만나봤어요",
+			condition:() => CardUI.getOnThisDayCards().length > 0 }
 	]
 
 };
