@@ -320,6 +320,16 @@ window.PlayerData = {
         lastPlayDate: null
     },
 
+    wordGame: {
+        played: 0,
+        wins: 0,
+        currentStreak: 0,
+        bestStreak: 0,
+        dailyPlays: 0,
+        lastPlayDate: null,
+        bestTries: { 5:null, 6:null, 7:null }
+    },
+
     fragments: 0,
     fragmentUnlocks: 0,
 

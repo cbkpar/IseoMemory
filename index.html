@@ -140,11 +140,13 @@
 				<button class="stats-tab active" data-tab="summary" type="button">기록</button>
 				<button class="stats-tab" data-tab="missions" type="button">미션 <span id="mission-count-badge" class="stats-tab-badge"></span></button>
 				<button class="stats-tab" data-tab="achievements" type="button">도전과제 <span id="achievement-count-badge" class="stats-tab-badge"></span></button>
+				<button class="stats-tab settings-tab" data-tab="settings" type="button" title="설정" aria-label="설정">⚙️</button>
 			</div>
 		</div>
 		<div id="stats-panel-summary" class="stats-panel"></div>
 		<div id="stats-panel-missions" class="stats-panel hidden"></div>
 		<div id="stats-panel-achievements" class="stats-panel hidden"></div>
+		<div id="stats-panel-settings" class="stats-panel hidden"></div>
 	</div>
 </div>
 
@@ -286,9 +288,11 @@
 				<button id="word-restart" class="word-restart-btn" type="button" aria-label="다른 단어로 새로 시작">🔄</button>
 			</div>
 			<p id="word-status" class="word-status"></p>
+			<p id="word-lifetime" class="word-lifetime"></p>
 			<p id="word-result" class="game-result"></p>
 			<div id="word-grid" class="word-grid"></div>
 			<p id="word-preview" class="word-preview"></p>
+			<button id="word-share" class="word-share-btn hidden" type="button">📋 결과 공유하기</button>
 			<div id="word-keyboard" class="word-keyboard"></div>
 		</div>
 	</div>

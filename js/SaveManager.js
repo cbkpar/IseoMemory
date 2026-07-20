@@ -57,6 +57,8 @@ window.SaveManager = {
 		PlayerData.memoryGame ??= { bestMoves:null, dailyPlays:0, lastPlayDate:null };
 		PlayerData.puzzleGame ??= { bestMoves:{3:null,4:null,5:null}, dailyPlays:0, lastPlayDate:null };
 		PlayerData.puzzleGame.bestMoves ??= { 3:null, 4:null, 5:null };
+		PlayerData.wordGame ??= { played:0, wins:0, currentStreak:0, bestStreak:0, dailyPlays:0, lastPlayDate:null, bestTries:{5:null,6:null,7:null} };
+		PlayerData.wordGame.bestTries ??= { 5:null, 6:null, 7:null };
 		Player.ensureDailyMissions();
 		PlayerData.streak ??= { count:0, best:0, lastVisit:null };
 		PlayerData.streak.count ??= 0;

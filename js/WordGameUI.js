@@ -10,15 +10,16 @@ window.WordGameUI = {
 	KEYBOARD_VOWELS: ["ㅏ","ㅐ","ㅑ","ㅒ","ㅓ","ㅔ","ㅕ","ㅖ","ㅗ","ㅘ","ㅙ","ㅚ","ㅛ","ㅜ","ㅝ","ㅞ","ㅟ","ㅠ","ㅡ","ㅢ","ㅣ"],
 
 	WORDS: {
-		5:["가을","가족","검사","겨울","고민","기록","기적","내일","마음","모빌","바람","사랑","사진","소원","시작","엄마","여름","예정","오늘","이름","준비","추억","축하","태동","태명","트림","편지","하늘"],
-		6:["고마워","기저귀","눈물","만남","만삭","목욕","무지개","백일","별빛","병실","병원","봄날","성장","손발","순간","심장","앨범","얼굴","용품","웃음","유모차","젖병","첫날","출산","카시트","키재기","포대기","행복"],
-		7:["겉싸개","놀이터","목소리","몸무게","반가워","발싸개","배내옷","사랑해","소중해","속싸개","손싸개","애틋해","우유병","이불보","이유식","자장가","잠꼬대","초음파"]
+		5:["가을","가족","검사","겨울","고민","계절","계획","구름","그림","기록","기적","낙서","남매","내일","노을","다짐","도장","동네","동요","둘째","리듬","리본","마당","마음","목표","모빌","박수","반지","바람","밤새","배꼽","벽지","사돈","사랑","사진","새벽","새싹","셋째","소원","시작","아침","앉기","액자","엄마","여름","열매","예정","오늘","요람","요일","이름","이불","이웃","자궁","저녁","종이","준비","첫니","초침","추억","축하","친구","커튼","태동","태명","트림","팔찌","편지","하늘","하품","형제"],
+		6:["고마워","기저귀","기지개","까르르","꽃잎","눈물","눈썹","달력","달빛","만남","만삭","목욕","무지개","물감","발톱","방울","백일","벌꿀","별빛","병실","병원","보조개","볼살","봄날","분침","붓끝","삼촌","성별","성장","손발","손톱","순간","스티커","심박","심장","앨범","얼굴","영상","용품","웃음","율동","유모차","인형","입술","잇몸","재채기","점심","정원","젖병","창문","첫날","출산","카시트","키재기","포대기","행복","햇살"],
+		7:["강아지","겉싸개","고양이","놀이터","뒤집기","멜로디","목소리","몸무게","반가워","발싸개","배내옷","배밀이","별자리","병아리","사랑해","소중해","속싸개","손싸개","숨소리","애틋해","우유병","이불보","이유식","자장가","잠꼬대","초음파","크레용"]
 	},
 
 	state: null,
 
 	init(){
 		document.getElementById("word-restart").onclick = () => this.startGame();
+		document.getElementById("word-share").onclick = () => this.shareResult();
 		document.querySelectorAll(".word-size-chip").forEach(chip => {
 			chip.onclick = () => {
 				document.querySelectorAll(".word-size-chip").forEach(c => c.classList.toggle("active", c === chip));
@@ -174,7 +175,51 @@ window.WordGameUI = {
 			s.win = false;
 		}
 
+		if (s.over) this.recordResult(s);
+
 		this.render();
+	},
+
+	// Persist lifetime stats (played/wins/streaks/best tries), reward fragments
+	// (capped at 3 rewarded wins/day, same pattern as the other minigames),
+	// check achievements, and prepare the result text shown to the player.
+	recordResult(s){
+		const wg = PlayerData.wordGame;
+		const today = Player.todayKey();
+		if (wg.lastPlayDate !== today) {
+			wg.lastPlayDate = today;
+			wg.dailyPlays = 0;
+		}
+
+		wg.played += 1;
+		s.rewardText = "";
+		s.bestText = "";
+
+		if (s.win) {
+			wg.wins += 1;
+			wg.currentStreak += 1;
+			if (wg.currentStreak > wg.bestStreak) wg.bestStreak = wg.currentStreak;
+
+			if (wg.dailyPlays < 3) {
+				wg.dailyPlays += 1;
+				const reward = (s.length - 5) * 2 + 6; // 5글자→6, 6글자→8, 7글자→10
+				PlayerData.fragments += reward;
+				s.rewardText = ` · 🧩 +${reward}`;
+			}
+
+			const tries = s.guesses.length;
+			const best = wg.bestTries[s.length];
+			if (!best || tries < best) {
+				wg.bestTries[s.length] = tries;
+				s.bestText = " · 🏆 최고기록 경신!";
+			}
+		} else {
+			wg.currentStreak = 0;
+		}
+
+		SaveManager.save();
+		CardUI.renderStatus();
+		AchievementManager.checkAll();
 	},
 
 	render(){
@@ -190,9 +235,16 @@ window.WordGameUI = {
 			? (s.win ? "🎉 성공!" : `실패 · 정답 "${s.word}"`)
 			: `남은 기회 ${this.MAX_TRIES - s.guesses.length}번 · 🟩정확 🟨포함 ⬜없음`;
 
+		const wg = PlayerData.wordGame;
+		document.getElementById("word-lifetime").textContent =
+			`누적 ${wg.played}전 ${wg.wins}승 · 연속 ${wg.currentStreak}승 (최고 ${wg.bestStreak}승)`;
+
 		document.getElementById("word-result").textContent = s.over
-			? (s.win ? `"${s.word}" 정답이에요!` : "")
+			? (s.win ? `"${s.word}" 정답이에요!${s.rewardText || ""}${s.bestText || ""}` : "")
 			: "";
+
+		const shareBtn = document.getElementById("word-share");
+		shareBtn.classList.toggle("hidden", !s.over);
 
 		// live preview of what the current row spells out so far
 		const previewEl = document.getElementById("word-preview");
@@ -269,6 +321,30 @@ window.WordGameUI = {
 		const backBtn = kb.querySelector('[data-key="back"]');
 		if (backBtn) backBtn.disabled = s.over || s.current.length === 0;
 		kb.classList.toggle("disabled", s.over);
+	},
+
+	shareResult(){
+		const s = this.state;
+		if (!s || !s.over) return;
+
+		const emoji = { correct: "🟩", present: "🟨", absent: "⬜" };
+		const rows = s.statuses.map(row => row.map(st => emoji[st]).join("")).join("\n");
+		const scoreLabel = s.win ? `${s.guesses.length}/${this.MAX_TRIES}` : `X/${this.MAX_TRIES}`;
+		const text = `이서메모리 오늘의 단어 ${s.length}글자 ${scoreLabel}\n${rows}`;
+
+		const btn = document.getElementById("word-share");
+		const done = (ok) => {
+			if (!btn) return;
+			const original = "📋 결과 공유하기";
+			btn.textContent = ok ? "✅ 복사했어요!" : "복사에 실패했어요";
+			setTimeout(() => { btn.textContent = original; }, 1800);
+		};
+
+		if (navigator.clipboard && navigator.clipboard.writeText) {
+			navigator.clipboard.writeText(text).then(() => done(true)).catch(() => done(false));
+		} else {
+			done(false);
+		}
 	},
 
 	escapeHtml(str){

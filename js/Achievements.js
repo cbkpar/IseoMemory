@@ -210,6 +210,18 @@ window.Achievements = {
 		{ id:"PUZZLE_HARD", cat:"SPECIAL", icon:"🏔️", title:"어려운 퍼즐 정복", desc:"5×5 난이도 퍼즐을 완성했어요",
 			condition:() => PlayerData.puzzleGame.bestMoves[5] !== null },
 
+		{ id:"WORD_WIN", cat:"SPECIAL", icon:"🔤", title:"오늘의 단어 정답", desc:"오늘의 단어를 처음 맞췄어요",
+			condition:() => PlayerData.wordGame.wins >= 1 },
+
+		{ id:"WORD_STREAK_3", cat:"SPECIAL", icon:"🔥", title:"단어 3연속 정답", desc:"오늘의 단어를 3번 연속으로 맞췄어요",
+			condition:() => PlayerData.wordGame.bestStreak >= 3 },
+
+		{ id:"WORD_MASTER", cat:"SPECIAL", icon:"🏆", title:"단어의 달인", desc:"오늘의 단어를 10번 맞췄어요",
+			condition:() => PlayerData.wordGame.wins >= 10 },
+
+		{ id:"WORD_PERFECT", cat:"SPECIAL", icon:"🎯", title:"한 번에 정답", desc:"오늘의 단어를 첫 시도에 맞췄어요",
+			condition:() => Object.values(PlayerData.wordGame.bestTries).some(v => v === 1) },
+
 		{ id:"ON_THIS_DAY", cat:"SPECIAL", icon:"📅", title:"그날의 우리를 다시", desc:"'1년 전 오늘' 기억을 다시 만나봤어요",
 			condition:() => CardUI.getOnThisDayCards().length > 0 }
 	]
